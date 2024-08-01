@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified"
+	version="1.0.0">
+	
+	<!-- Root element -->
+	<xs:element name="CurrencyConvInfo" type="CurrencyConvInfo"/>
+	
+	<!-- Describes a field containing an amount in the format as defined by ISO 8583 i.e n12. -->
+	<xs:simpleType name="ISO8583_Amount">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{12}" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="Currency">
+		<xs:annotation>
+			<xs:documentation>
+				Contains information about a currency.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>		
+			<xs:element name="Code" type="xs:string" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						 Numeric code of the currency.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="AlphaCode" type="xs:string" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						Alphabetic code of the currency.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="MinorUnits" type="xs:int" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The number of digits following the decimal separator.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Name" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The descriptive name of the currency.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+		
+	<xs:complexType name="CurrencyConvInfo">
+		<xs:annotation>
+			<xs:documentation>
+				This XSD defines currency conversion information provided by an external entity in
+				response to a Dynamic Currency Conversion (DCC) card rate request.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ProviderRoutingId" type="xs:string" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						An identifier for the external entity that provided the currency conversion 
+						information which represents a DCC offer. This identifier is used by Transaction 
+						Manager when routing financial transactions that represent an accepted DCC offer 
+						to an acquirer that has a relationship with the currency conversion provider. 
+						Transaction Manager requires this field to be set.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Rate" type="xs:decimal" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The exchange rate used when performing currency conversion from the amount 
+						in the source currency to the amount in the target currency. Examples: 4.9880; 
+						61.41170; 110.86980; 1538.70010; 25073.8100; 0.00003988201
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SrcCurr" type="Currency" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The information of the currency being converted from.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TgtCurr" type="Currency" minOccurs="1" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The information of the currency being converted to. 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Provider" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The currency conversion service provider.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RateSrc" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The source of conversion data.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Timestamp" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						Time the conversion was performed in Coordinated Universal Time (UTC), formatted as an
+						ISO date string: yyyyMMddTHH:mm. Example: 20150729T15:35
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:pattern
+							value="[0-9]{8}T[0-9]{2}:[0-9]{2}">
+						</xs:pattern>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="MargRate" type="xs:decimal" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						Numeric value representing the foreign exchange markup rate as a fraction. Used
+						for the purposes of receipt printing and to meet regulatory requirements. Examples: 
+						3; 3.75
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="CommRate" type="xs:decimal" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						Numeric value representing the foreign exchange commission rate as a fraction.
+						Used for the purposes of receipt printing and to meet regulatory requirements. 
+						Examples: 7; 7.530000
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="SrcAmnt" type="ISO8583_Amount" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						Amount of the transaction in the currency being converted from. The value must be 
+						expressed in the minor denomination (e.g. cents) and must be 12 digits in length,
+						left padded with zeroes. Example: 000000013567
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TgtAmnt" type="ISO8583_Amount" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						Amount of the transaction in the currency being converted to. The value must be 
+						expressed in the minor denomination (e.g. cents) and must be 12 digits in length,
+						left padded with zeroes. Example: 000000013567
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ExpTimestamp" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						The offer expiration date and time in Coordinated Universal Time (UTC), formatted as an
+						ISO date string: yyyyMMddTHH:mm. Example: 20150730T15:35
+					</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:pattern
+							value="[0-9]{8}T[0-9]{2}:[0-9]{2}">
+						</xs:pattern>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RcptTxt1" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						Additional disclaimer information required for printing on receipts.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="RcptTxt2" type="xs:string" minOccurs="0" maxOccurs="1">
+				<xs:annotation>
+					<xs:documentation>
+						Additional disclaimer information required for printing on receipts.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

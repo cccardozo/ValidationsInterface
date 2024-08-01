@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<!--
+
+	Postilion
+	3500 Lenox Road, Suite 200
+	Atlanta, GA 30326 U.S.A
+	T +1 404.923.3500 F +1 404.923.6727
+	TOLL FREE +1 888.457.2237
+
+	Copyright (C) 2006
+	This software may not be copied or distributed in any form without the
+	written permission of Postilion.
+
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+	<!-- Root element -->
+	
+	<xsd:element name="applications" type="applications"/>
+	
+	<!-- Applications Type Definition -->
+	
+	<xsd:complexType name="applications">
+		<xsd:sequence>
+			<xsd:element name="application" type="application" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Application Type Definition -->
+	
+	<xsd:complexType name="application">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="description" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="version" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="previousVersion" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="installType" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="edition" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="location" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="licensed" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="databaseServerType" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="patches" type="patches" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="rollbackScripts" type="scripts" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="uninstallScripts" type="scripts" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="rollbackClasspath" type="classpaths" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="uninstallClasspath" type="classpaths" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="dependencies" type="applicationDependencies" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="metadata" type="metadata" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Application Dependencies Type Definition -->
+	
+	<xsd:complexType name="applicationDependencies">
+		<xsd:sequence>
+			<xsd:element name="applicationDependencies" type="applicationDependency" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Application Dependency Type Defintion -->
+	
+	<xsd:complexType name="applicationDependency">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="minimumVersion" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+			
+	<!-- Patches Type Definition -->
+	
+	<xsd:complexType name="patches">
+		<xsd:sequence>
+			<xsd:element name="patch" type="patch" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Patch Type Definition -->
+	
+	<xsd:complexType name="patch">
+		<xsd:sequence>
+			<xsd:element name="number" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="description" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="dependencies" type="patchDependencies" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="uninstallScripts" type="scripts" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="uninstallClasspath" type="classpaths" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Patch Dependencies Type Definition -->
+	
+	<xsd:complexType name="patchDependencies">
+		<xsd:sequence>
+			<xsd:element name="patch" type="patchDependency" minOccurs="1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Patch Dependency Type Definition -->
+	
+	<xsd:complexType name="patchDependency">
+		<xsd:sequence>
+			<xsd:element name="number" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Scripts Type Definition -->
+	
+	<xsd:complexType name="scripts">
+		<xsd:sequence>
+			<xsd:element name="script" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Classpaths Type Definition -->
+	
+	<xsd:complexType name="classpaths">
+		<xsd:sequence>
+			<xsd:element name="classpath" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Attributes Type Definition -->
+	
+	<xsd:complexType name="metadata">
+		<xsd:sequence>
+			<xsd:element name="tag" type="metadatatag" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Tag Type Definition -->
+	
+	<xsd:complexType name="metadatatag">
+		<xsd:sequence>
+      	<xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+</xsd:schema>

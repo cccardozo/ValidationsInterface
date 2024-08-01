@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="LodgingData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="FolioNr"/>
+        <xs:element minOccurs="0" ref="FacilityPhoneNr"/>
+        <xs:element minOccurs="0" ref="DateArrival"/>
+        <xs:element minOccurs="0" ref="DateDeparture"/>
+        <xs:element minOccurs="0" ref="AmountRoomRate"/>
+        <xs:element minOccurs="0" ref="AmountRoomTax"/>
+        <xs:element minOccurs="0" ref="AmountPhoneCharges"/>
+        <xs:element minOccurs="0" ref="AmountRestaurantAndRoomService"/>
+        <xs:element minOccurs="0" ref="AmountBarAndMinibar"/>
+        <xs:element minOccurs="0" ref="AmountLaundryAndDryCleaning"/>
+        <xs:element minOccurs="0" ref="AmountGiftShop"/>
+        <xs:element minOccurs="0" ref="AmountOtherServices"/>
+        <xs:element minOccurs="0" ref="AmountOtherServicesIndicator"/>
+        <xs:element minOccurs="0" ref="AmountBillingAdjustment"/>
+        <xs:element minOccurs="0" ref="ProgramCode"/>
+        <xs:element minOccurs="0" ref="CustomerServicePhoneNr"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="FolioNr" type="xs:string"/>
+  <xs:element name="FacilityPhoneNr" type="xs:string"/>
+  <xs:element name="DateArrival" type="xs:string"/>
+  <xs:element name="DateDeparture" type="xs:string"/>
+  <xs:element name="AmountRoomRate" type="xs:string"/>
+  <xs:element name="AmountRoomTax" type="xs:string"/>
+  <xs:element name="AmountPhoneCharges" type="xs:string"/>
+  <xs:element name="AmountRestaurantAndRoomService" type="xs:string"/>
+  <xs:element name="AmountBarAndMinibar" type="xs:string"/>
+  <xs:element name="AmountLaundryAndDryCleaning" type="xs:string"/>
+  <xs:element name="AmountGiftShop" type="xs:string"/>
+  <xs:element name="AmountOtherServices" type="xs:string"/>
+  <xs:element name="AmountOtherServicesIndicator" type="xs:string"/>
+  <xs:element name="AmountBillingAdjustment" type="xs:string"/>
+  <xs:element name="ProgramCode" type="xs:string"/>
+  <xs:element name="CustomerServicePhoneNr" type="xs:string"/>
+</xs:schema>

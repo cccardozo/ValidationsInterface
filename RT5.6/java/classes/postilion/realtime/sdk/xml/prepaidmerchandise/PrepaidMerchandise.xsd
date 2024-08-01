@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="PrepaidMerchandise">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="Request"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="Response"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="AdviceRequest"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="ReversalRequest"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="ReversalResponse"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Request">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="Product"/>
+        <xs:element minOccurs="0" ref="Tender"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Product">
+    <xs:complexType>
+      <xs:attribute name="NetworkID"/>
+      <xs:attribute name="ProductID"/>
+      <xs:attribute name="Type"/>
+      <xs:attribute name="UserID"/>
+      <xs:attribute name="Track2"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Tender">
+    <xs:complexType>
+      <xs:attribute name="Amount"/>
+      <xs:attribute name="Type"/>
+      <xs:attribute name="SerialNumber"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Response">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="Product"/>
+        <xs:element minOccurs="0" ref="Tender"/>
+        <xs:element minOccurs="0" ref="MerchandiseItem"/>
+        <xs:element minOccurs="0" ref="MerchandiseIssuer"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="QuantityItem"/>
+      </xs:sequence>
+      <xs:attribute name="TransactionSeqNo"/>
+      <xs:attribute name="ResponseCode"/>
+      <xs:attribute name="ResponseMessage"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MerchandiseItem">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="Token"/>
+        <xs:element minOccurs="0" ref="MerchandiseIssuer"/>
+      </xs:sequence>
+      <xs:attribute name="PIN"/>
+      <xs:attribute name="ItemSerialNumber"/>
+      <xs:attribute name="ExpiryDate"/>
+      <xs:attribute name="Amount"/>
+      <xs:attribute name="TaxAmount"/>
+      <xs:attribute name="NetworkName"/>
+      <xs:attribute name="ProductName"/>
+      <xs:attribute name="ItemMessage"/>
+      <xs:attribute name="DescriptiveValue"/>
+      <xs:attribute name="TariffIndex"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Token">
+    <xs:complexType>
+      <xs:attribute name="Description"/>
+      <xs:attribute name="Value"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MerchandiseIssuer">
+    <xs:complexType>
+      <xs:attribute name="Name"/>
+      <xs:attribute name="Id"/>
+      <xs:attribute name="ContactNumber"/>
+      <xs:attribute name="RegistrationNumber"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="QuantityItem">
+    <xs:complexType>
+      <xs:attribute name="ProductCode"/>
+      <xs:attribute name="ProductName"/>
+      <xs:attribute name="Quantity"/>
+      <xs:attribute name="QuantityDescription"/>
+      <xs:attribute name="ExpiryDate"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="AdviceRequest">
+    <xs:complexType>
+      <xs:attribute name="TransactionSeqNo"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReversalRequest">
+    <xs:complexType>
+      <xs:attribute name="TransactionSeqNo"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ReversalResponse">
+    <xs:complexType>
+      <xs:attribute name="TransactionSeqNo"/>
+      <xs:attribute name="ResponseCode"/>
+      <xs:attribute name="ResponseMessage"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

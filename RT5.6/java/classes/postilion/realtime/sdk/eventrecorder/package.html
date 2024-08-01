@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+	Package overview file for JavaDoc. Everything outside of 
+	the body tags is ignored by JavaDoc.
+
+-->
+</head>
+<body bgcolor="white">
+
+This packages encapsulates a generic event reporting framework.
+<P>
+	
+<!-- Put @see and @since tags down here. -->
+The Event Recorder Framework essentially consists of the following:
+<OL>
+	<LI>The EventRecorder: A central entity responsible for accepting and recording events.</LI>
+	<LI>A collection of Scribes: A scribe is an entity that is responsible for monitoring and 
+		possibly reporting events that are raised within the system. This could mean either tracking 
+		the event (as part of a trend) or reporting the event, or both.</LI>
+</OL>
+</P>
+<P>
+The EventRecorder decouples applications from the <em>when</em> and <em>how</em> of event logging. Scribes 
+are responsible for deciding which events to log (the <em>when</em>) and what form that logging
+takes (<em>how</em>).
+</P>
+<P>
+Scribes may themselves record new events. An example of this would be scribes that perform trend monitoring.
+When a trend threshold is tripped a new event may be raised to report this fact to a user. 
+</P>
+<P>
+Events are recorded by passing them to a method on the {@link postilion.realtime.sdk.eventrecorder.EventRecorder} class. 
+</P>
+<P>
+Events are defined much like they are for the Windows eventlog and the support framework 
+today. An input file defines the event in a parameterized language neutral way. A set 
+of categories is defined (this set is extensible) and each event may be marked as belonging 
+to one or more categories. This provides a flexible way of 'typing' events and makes 
+it possible for scribes to quickly select the subset of all events they are 
+interested in. Categories are defined by a class hierarchy rooted at 
+{@link postilion.realtime.sdk.eventrecorder.ACategory}
+</P>
+<P>
+Events also have context associated with them. Context is information about the 'entities' 
+within the system that are affected by the event. Contexts are also defined by a class
+hierarchy, rooted at {@link postilion.realtime.sdk.eventrecorder.AContext}. The types of
+context typically associated with an event may include 
+<OL>
+	<LI>A sap </LI>
+	<LI>An endpoint</LI> 
+	<LI>An interchange </LI>
+	<LI>A terminal </LI>
+	<LI>An application </LI>
+	<LI>A cryptographic key </LI>
+	<LI>A node </LI>
+	<LI>An exception</LI> 
+</OL>
+Not all types of context will necessarily be available (or even make sense) when the 
+event is raised. An initial set of types of context that may be associated with the 
+event is defined by this SDK but this set is extensible.
+</P>
+<P>
+Context is strongly typed, making it possible for scribes to include the context of an 
+event in the decision making process. For example, a scribe may wish to track 
+cryptographic errors (determined by the category of an event) for a particular cryptographic 
+key (determined by examining the context associated with an event). 
+</P>
+<P>
+In addition to this, the framework is extensible making it possible to plug in custom scribe 
+implementations. To this end an interface is defined which must be implemented by scribes. 
+These scribes may register to be notified when certain types of events are raised. The 
+scribe is then passed the event and given a chance to decide what to do with that event. 
+</P>
+	
+</body>
+</html>

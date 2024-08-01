@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<!-- Root Element -->
+	<xsd:element name="CardManagementUpdateLoad">
+		<xsd:complexType>
+			<xsd:all>
+				<xsd:element name="Request" type="Request" minOccurs="0"/>
+				<xsd:element name="Response" type="Response" minOccurs="0"/>
+			</xsd:all>
+		</xsd:complexType>
+	</xsd:element>
+
+	<!-- Request/Response type definitions -->
+	<xsd:complexType name="Request">
+		<xsd:all>
+			<xsd:element name="FileFormat" type="FileFormat"/>
+			<xsd:element name="FileList" type="FileList">
+				<xsd:unique name="request-file-name-uniqueness">
+					<xsd:selector xpath="File" />
+					<xsd:field xpath="FileName" />
+				</xsd:unique>
+			</xsd:element>
+		</xsd:all>
+	</xsd:complexType>
+	
+	<xsd:complexType name="Response">
+		<xsd:all>
+			<xsd:element name="FileFormat" type="FileFormat"/>
+			<xsd:element name="FileList" type="FileList">
+				<xsd:unique name="response-file-name-uniqueness">
+					<xsd:selector xpath="File" />
+					<xsd:field xpath="FileName" />
+				</xsd:unique>
+			</xsd:element>
+		</xsd:all>
+	</xsd:complexType>
+	<!-- Request/Response type definitions -->
+
+	<xsd:complexType name="FileList">
+		<xsd:sequence>
+			<xsd:element name="File" type="File" minOccurs="1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="File">
+		<xsd:all>
+			<xsd:element name="FileName" type="FileName"/>
+			<xsd:element name="FileRowList" type="FileRowList"/>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="FileRowList">
+		<xsd:sequence>
+			<xsd:element name="FileRow" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="FileFormat">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Standard"/>
+			<xsd:enumeration value="Standard 2"/>
+			<xsd:enumeration value="Standard 3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="FileName">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CARDS"/>
+			<xsd:enumeration value="CARDOVERRIDELIMITS"/>
+			<xsd:enumeration value="CARDEXTENDEDLIMITS"/>
+			<xsd:enumeration value="ACCOUNTS"/>
+			<xsd:enumeration value="ACCOUNTOVERRIDELIMITS"/>
+			<xsd:enumeration value="ACCOUNTEXTENDEDLIMITS"/>
+			<xsd:enumeration value="CARDACCOUNTS"/>
+			<xsd:enumeration value="CARDACCOUNTEXTENDEDLIMITS"/>
+			<xsd:enumeration value="ACCOUNTBALANCES"/>
+			<xsd:enumeration value="STATEMENTS"/>
+			<xsd:enumeration value="CUSTOMERS"/>
+			<xsd:enumeration value="CUSTOMEREXTENDEDLIMITS"/>
+			<xsd:enumeration value="CUSTOMERACCOUNTS"/>
+			<xsd:enumeration value="CUSTOMERACCOUNTEXTENDEDLIMITS"/>
+			<xsd:enumeration value="TEMPCARDS"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

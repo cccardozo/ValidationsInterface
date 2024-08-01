@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xs:complexType name="CheckDataType">
+		<xs:sequence>
+			<xs:element minOccurs="0" ref="CheckType"/>
+			<xs:element minOccurs="0" ref="CheckIDCard"/>
+			<xs:element minOccurs="0" ref="IDCrossChecked"/>
+			<xs:element minOccurs="0" ref="SupervisorID"/>
+			<xs:element minOccurs="0" ref="FormattedMICR"/>
+			<xs:element minOccurs="0" ref="UnformattedMICR"/>
+			<xs:element minOccurs="0" ref="DriversLicense"/>
+			<xs:element minOccurs="0" ref="GenericID"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="CheckData">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="CheckDataType">
+					<xs:sequence>
+						<xs:element  name="AdditionalChecks" type="CheckDataType" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CheckType" type="xs:string"/>
+	<xs:element name="CheckIDCard" type="xs:string"/>
+	<xs:element name="IDCrossChecked" type="xs:string"/>
+	<xs:element name="SupervisorID" type="xs:string"/>
+	<xs:element name="FormattedMICR">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="CheckNr"/>
+				<xs:element ref="TransitNr"/>
+				<xs:element minOccurs="0" ref="TransitNrCheckDigit"/>
+				<xs:element ref="AccountNr"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CheckNr" type="xs:string"/>
+	<xs:element name="TransitNr" type="xs:string"/>
+	<xs:element name="TransitNrCheckDigit" type="xs:string"/>
+	<xs:element name="AccountNr" type="xs:string"/>
+	<xs:element name="UnformattedMICR" type="xs:string"/>
+	<xs:element name="DriversLicense">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DriversLicenseNr"/>
+				<xs:element minOccurs="0" ref="StateCode"/>
+				<xs:element minOccurs="0" ref="DateOfBirth"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DriversLicenseNr" type="xs:string"/>
+	<xs:element name="StateCode" type="xs:string"/>
+	<xs:element name="DateOfBirth" type="xs:string"/>
+	<xs:element name="GenericID">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="IDNr"/>
+				<xs:element ref="IDType"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="IDNr" type="xs:string"/>
+	<xs:element name="IDType" type="xs:string"/>
+</xs:schema>

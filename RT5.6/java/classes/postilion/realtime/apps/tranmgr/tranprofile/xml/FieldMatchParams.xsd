@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema version="1.0.0"
+	elementFormDefault="qualified"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<!-- root element -->
+	<xs:element name="FieldMatchParams">
+    	<xs:complexType>
+			<xs:sequence>
+				<xs:element name="FieldID" type="xs:string" minOccurs="1" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+							The identifier of the field in a message or transaction.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="FieldLength" minOccurs="0" maxOccurs="1">
+					<xs:annotation>
+						<xs:documentation>
+							The number of characters that make up the field value. This has to be specified if the field value forms part of a larger field (i.e. is a subfield).
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:int">
+							<xs:minInclusive value="0"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="FieldOffset" minOccurs="0" maxOccurs="1" default="0">
+					<xs:annotation>
+						<xs:documentation>
+							The offset of the field value within a larger field. This may be specified if the field value forms part of a larger field (i.e. is a subfield).
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:int">
+							<xs:minInclusive value="0"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+				<xs:element name="ToTrimField" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false">
+					<xs:annotation>
+						<xs:documentation>
+							Whether leading and/or trailing white space must be removed from the field value before it is compared with the target values and/or ranges.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="MatchMode" minOccurs="0" maxOccurs="1" default="2">
+					<xs:annotation>
+						<xs:documentation>
+							0 - The field value must be absent to constitute a match.
+							1 - The field value must simply be present to constitute a match. The value will not be compared with anything.
+							2 - (Default) The field value must be present, and will be compared with the target values and/or ranges to determine whether it is a match.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:int">
+							<xs:enumeration value="0"/>
+							<xs:enumeration value="1"/>
+							<xs:enumeration value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+
+				<xs:element name="DataType" minOccurs="0" maxOccurs="1" default="0">
+					<xs:annotation>
+						<xs:documentation>
+							0 - (Default) Values will be compared as strings (i.e. lexicographically), and case will be ignored.
+							1 - Values will be compared as numbers.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:int">
+							<xs:enumeration value="0"/>
+							<xs:enumeration value="1"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:element>
+
+				<xs:element name="TargetValue" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>
+							The value or values to compare with the field value. The field value may match any of the target values provided.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="TargetRange" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>
+							The range or ranges to compare with the field value. The field value may fall within any of the (inclusive) target ranges provided.
+						</xs:documentation>
+					</xs:annotation>
+			    	<xs:complexType>
+				      <xs:attribute name="start" type="xs:string" use="required">
+					      <xs:annotation>
+								<xs:documentation>
+									The start value of the (inclusive) target range.
+								</xs:documentation>
+			      		</xs:annotation>
+				      </xs:attribute>
+				      <xs:attribute name="end" type="xs:string" use="required">
+					      <xs:annotation>
+								<xs:documentation>
+									The end value of the (inclusive) target range.
+								</xs:documentation>
+			      		</xs:annotation>
+				      </xs:attribute>
+			    	</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+   	</xs:complexType>
+	</xs:element>
+</xs:schema>

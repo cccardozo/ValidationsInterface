@@ -1,0 +1,398 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+	<xsd:element name="scheduled_job" type="scheduled_job"/>
+	<xsd:element name="scheduler_command" type="scheduler_command"/>
+	
+	<!--
+	=======================
+	  Postilion Scheduler
+	=======================
+	-->
+	<xsd:complexType name="scheduler_command">
+		<xsd:sequence>
+			<xsd:element name="id" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="version" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<!-- EchoData is optional -->
+			<xsd:element name="echo_data" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:choice>
+				<xsd:element name="add" type="add"/>
+				<xsd:element name="update" type="update"/>
+				<xsd:element name="delete" type="delete"/>
+				<xsd:element name="list" type="list"/>
+				<xsd:element name="control" type="control"/>
+				<xsd:element name="result" type="result"/>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!--
+	=======================
+	  Command Definitions
+	=======================
+	-->
+	<!--
+		================= 
+		Add Command Type
+		=================
+	-->
+	<xsd:complexType name="add">
+		<xsd:sequence>
+			<xsd:element name="scheduled_job" type="scheduled_job"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--
+		==================== 
+		Update Command Type
+		====================
+	-->
+	<xsd:complexType name="update">
+		<xsd:sequence>
+			<xsd:element name="scheduled_job" type="scheduled_job"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--
+		====================
+		Delete Command Type
+		====================
+	
+		Note that for the delete-command, only the name of the
+		scheduled job is needed to identify the job.
+	-->
+	<xsd:complexType name="delete">
+		<xsd:sequence>
+			<xsd:element name="job_name" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--
+		==================
+		List Command Type
+		==================
+	
+		Note that for the list-command, only the name of the ScheduledJob
+		is necessary, or * for all jobs.
+	-->
+	<xsd:complexType name="list">
+		<xsd:sequence>
+			<xsd:element name="job_name" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!--
+		======================
+		 Control Command Type
+		======================
+		
+			1. Enable 	
+			2. Disable 	
+			3. Start 	
+			4. Stop 	
+	-->
+	<xsd:complexType name="control">
+		<xsd:sequence>
+			<!--  The name of the scheduled job -->
+			<xsd:element name="job_name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="command" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!--
+	======================
+	  Command Result Type
+	======================
+	-->
+	<xsd:complexType name="result">
+		<xsd:sequence>
+			<xsd:element name="response_code" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="message" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			
+			<xsd:element name="scheduled_jobs" minOccurs="0" maxOccurs="1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="scheduled_job" type="scheduled_job" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!--
+	============================
+	  Scheduled Job Definition
+	============================
+	-->
+	<xsd:complexType name="scheduled_job">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="display_name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="enabled" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="monitored" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
+
+			<!-- Application Data -->
+			<xsd:element name="application_data" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<!-- Custom Job Runner -->
+			<xsd:element name="custom_job_runner" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<!-- Job Description -->
+			<xsd:element name="description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			<!-- UI Plugin -->
+			<xsd:element name="ui_plugin" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			
+			<xsd:element name="schedules" minOccurs="1" maxOccurs="1"> 
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="schedule" type="schedule" minOccurs="1" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="steps" minOccurs="1" maxOccurs="1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="step" type="step" minOccurs="1" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<!--
+	=======================
+	  Job Step Definition
+	=======================
+	-->
+	<xsd:complexType name="step">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<!--
+			======================
+			Failure Action
+			======================
+			-->
+			<xsd:element name="on_failure" type="xsd:string" default="CONTINUE"/>
+			
+			<xsd:choice minOccurs="1" maxOccurs="1">
+			
+				<!--
+				===================
+				  OS Command Type
+				===================
+				-->
+				<xsd:element name="os_command" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="command_string" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				
+				<!--
+				===================
+				  SQL Statement
+				===================
+				-->
+				<xsd:element name="sql_statement" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="statement" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+							<xsd:element name="datasource" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+							<xsd:element name="auto_commit" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+				
+			</xsd:choice>
+
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!--
+	===========================
+	  Job Schedule Definition
+	===========================
+	-->
+
+	<xsd:complexType name="schedule">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="enabled" type="xsd:boolean" minOccurs="1"/>
+			
+			<!--
+			=============
+			Schedule type
+			=============
+			-->
+			<xsd:choice minOccurs="1" maxOccurs="1">
+				<xsd:element name="fixed" type="schedule_type_fixed"/>
+				<xsd:element name="recurring" type="schedule_type_recurring"/>
+			</xsd:choice>
+			
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!--
+	===============================
+	  Once-off Schedule Type 
+	===============================
+	-->
+	<xsd:complexType name="schedule_type_fixed">
+		<xsd:sequence>
+			<xsd:element name="date_time" type="xsd:dateTime"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!--
+	===============================
+	  Recurring Schedule Type 
+	===============================
+	-->
+	<xsd:complexType name="schedule_type_recurring">
+		<xsd:sequence>
+			
+			<!--
+			==========================
+			  Schedule active period
+			==========================
+			-->
+			<xsd:element name="active_period">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="start_date" type="xsd:date" minOccurs="1"/>
+						<xsd:element name="end_date" type="xsd:date" minOccurs="0"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		
+			<!--
+			=================================
+					  Date Frequency
+			=================================
+			-->
+			
+			<xsd:element name="date" minOccurs="1" maxOccurs="1">
+				<xsd:complexType>
+					<xsd:sequence>
+						
+						<xsd:choice minOccurs="1" maxOccurs="1">
+							
+							<xsd:element name="day">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="interval" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							
+							<xsd:element name="week">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="interval" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+										<xsd:element name="day_of_week" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							
+							<xsd:element name="month">
+								<xsd:complexType>
+									<xsd:sequence>
+										
+										<xsd:choice minOccurs="1" maxOccurs="1">
+										
+											<xsd:element name="fixed">
+												<xsd:complexType>
+													<xsd:sequence>
+														<xsd:element name="interval" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+														<xsd:element name="day_of_month" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+													</xsd:sequence>
+												</xsd:complexType>
+											</xsd:element>
+		
+											<xsd:element name="recurring">
+												<xsd:complexType>
+													<xsd:sequence>
+														<xsd:element name="interval" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+														<xsd:element name="relative_interval" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+														<xsd:element name="day_of_month" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+													</xsd:sequence>
+												</xsd:complexType>
+											</xsd:element>
+	
+										</xsd:choice>
+										
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							
+						</xsd:choice>
+						
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<!--
+			=================================
+					  Time Frequency
+			=================================
+			-->
+				
+			<xsd:element name="time" minOccurs="1" maxOccurs="1">
+				<xsd:complexType>
+					<xsd:sequence>
+						
+						<xsd:choice minOccurs="1" maxOccurs="1">
+							
+							<xsd:element name="fixed">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="time" type="xsd:time" minOccurs="1" maxOccurs="1"/>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+							
+							<xsd:element name="recurring">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="start_time" type="xsd:time" minOccurs="1" maxOccurs="1"/>
+										<xsd:element name="end_time" type="xsd:time" minOccurs="1" maxOccurs="1"/>
+										
+										<xsd:choice minOccurs="1" maxOccurs="1">
+											
+											<xsd:element name="second">
+												<xsd:complexType>
+													<xsd:sequence>
+														<xsd:element name="interval" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+													</xsd:sequence>
+												</xsd:complexType>
+											</xsd:element>
+												
+											<xsd:element name="minute">
+												<xsd:complexType>
+													<xsd:sequence>
+														<xsd:element name="interval" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+													</xsd:sequence>
+												</xsd:complexType>
+											</xsd:element>
+	
+											<xsd:element name="hour">
+												<xsd:complexType>
+													<xsd:sequence>
+														<xsd:element name="interval" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+													</xsd:sequence>
+												</xsd:complexType>
+											</xsd:element>
+											
+										</xsd:choice>
+										
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+													
+													
+						</xsd:choice>
+
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+</xsd:schema>

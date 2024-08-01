@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="AirlineItineraryData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="CarrierName"/>
+        <xs:element minOccurs="0" ref="TicketNr"/>
+        <xs:element minOccurs="0" ref="PlanNr"/>
+        <xs:element minOccurs="0" ref="InvoiceNr"/>
+        <xs:element minOccurs="0" ref="PassengerName"/>
+        <xs:element minOccurs="0" ref="CustomerRef"/>
+        <xs:element minOccurs="0" ref="TravelAgencyCode"/>
+        <xs:element minOccurs="0" ref="TicketAgencyName"/>
+        <xs:element minOccurs="0" ref="TicketIssueAddress"/>
+        <xs:element minOccurs="0" ref="DateTicketIssue"/>
+        <xs:element minOccurs="0" ref="AmountTotalFare"/>
+        <xs:element minOccurs="0" ref="AmountTotalFees"/>
+        <xs:element minOccurs="0" ref="AmountTotalTaxes"/>
+        <xs:element minOccurs="0" ref="AmountOriginalInvoice"/>
+        <xs:element minOccurs="0" ref="OriginalCurrencyCode"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="Leg"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CarrierName" type="xs:string"/>
+  <xs:element name="TicketNr" type="xs:string"/>
+  <xs:element name="PlanNr" type="xs:string"/>
+  <xs:element name="InvoiceNr" type="xs:string"/>
+  <xs:element name="PassengerName" type="xs:string"/>
+  <xs:element name="CustomerRef" type="xs:string"/>
+  <xs:element name="TravelAgencyCode" type="xs:string"/>
+  <xs:element name="TicketAgencyName" type="xs:string"/>
+  <xs:element name="TicketIssueAddress" type="xs:string"/>
+  <xs:element name="DateTicketIssue" type="xs:string"/>
+  <xs:element name="AmountTotalFare" type="xs:string"/>
+  <xs:element name="AmountTotalFees" type="xs:string"/>
+  <xs:element name="AmountTotalTaxes" type="xs:string"/>
+  <xs:element name="AmountOriginalInvoice" type="xs:string"/>
+  <xs:element name="OriginalCurrencyCode" type="xs:string"/>
+  <xs:element name="Leg">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Nr"/>
+        <xs:element minOccurs="0" ref="CarrierCode"/>
+        <xs:element minOccurs="0" ref="FlightNr"/>
+        <xs:element minOccurs="0" ref="DepartureAirport"/>
+        <xs:element minOccurs="0" ref="StopOverCode"/>
+        <xs:element minOccurs="0" ref="DestinationCode"/>
+        <xs:element minOccurs="0" ref="DateOfTravel"/>
+        <xs:element minOccurs="0" ref="DepartureTime"/>
+        <xs:element minOccurs="0" ref="DepartureTimeSegmentCode"/>
+        <xs:element minOccurs="0" ref="ArrivalTime"/>
+        <xs:element minOccurs="0" ref="ArrivalTimeSegmentCode"/>
+        <xs:element minOccurs="0" ref="ClassOfTravel"/>
+        <xs:element minOccurs="0" ref="CouponNr"/>
+        <xs:element minOccurs="0" ref="ConjunctionTicketNr"/>
+        <xs:element minOccurs="0" ref="ExchangeTicketNr"/>
+        <xs:element minOccurs="0" ref="FareBasisCode"/>
+        <xs:element minOccurs="0" ref="AmountFare"/>
+        <xs:element minOccurs="0" ref="AmountFees"/>
+        <xs:element minOccurs="0" ref="AmountTaxes"/>
+        <xs:element minOccurs="0" ref="AmountDepartureTax"/>
+        <xs:element minOccurs="0" ref="EndorsementsOrRestrictions"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Nr" type="xs:string"/>
+  <xs:element name="CarrierCode" type="xs:string"/>
+  <xs:element name="FlightNr" type="xs:string"/>
+  <xs:element name="DepartureAirport" type="xs:string"/>
+  <xs:element name="StopOverCode" type="xs:string"/>
+  <xs:element name="DestinationCode" type="xs:string"/>
+  <xs:element name="DateOfTravel" type="xs:string"/>
+  <xs:element name="DepartureTime" type="xs:string"/>
+  <xs:element name="DepartureTimeSegmentCode" type="xs:string"/>
+  <xs:element name="ArrivalTime" type="xs:string"/>
+  <xs:element name="ArrivalTimeSegmentCode" type="xs:string"/>
+  <xs:element name="ClassOfTravel" type="xs:string"/>
+  <xs:element name="CouponNr" type="xs:string"/>
+  <xs:element name="ConjunctionTicketNr" type="xs:string"/>
+  <xs:element name="ExchangeTicketNr" type="xs:string"/>
+  <xs:element name="FareBasisCode" type="xs:string"/>
+  <xs:element name="AmountFare" type="xs:string"/>
+  <xs:element name="AmountFees" type="xs:string"/>
+  <xs:element name="AmountTaxes" type="xs:string"/>
+  <xs:element name="AmountDepartureTax" type="xs:string"/>
+  <xs:element name="EndorsementsOrRestrictions" type="xs:string"/>
+</xs:schema>

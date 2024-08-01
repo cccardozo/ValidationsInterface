@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+	Package overview file for JavaDoc. Everything outside of 
+	the body tags is ignored by JavaDoc.
+
+-->
+</head>
+<body bgcolor="white">
+
+This packages encapsulates a generic communications infrastructure.
+<p>
+	
+<!-- Put @see and @since tags down here. -->
+Communications in the Postilion Realtime Framework is built on top of essentially 
+two abstractions, namely <em>saps</em> (Service Access Points) and <em>endpoints</em>.
+<P>
+Saps are essentially Endpoint factories. Two types of sap are defined: a client and 
+a server sap. They differ in the state of the endpoint they produce. A client sap
+produces disconnected endpoints that must then be connected to a remote entity.
+A server sap produces endpoints that are already connected and represent a newly
+established connection.
+	
+</body>
+</html>

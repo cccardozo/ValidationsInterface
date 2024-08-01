@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+	<!-- root element -->
+	<xsd:element name="control_node_notifications" type="control_node_notifications" />
+
+	<!-- control_node_notifications type definition -->
+	<xsd:complexType name="control_node_notifications">
+		<xsd:sequence>
+			<xsd:element name="control_node_notification" type="control_node_notification" minOccurs="1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!-- control_node_notification type definition -->
+	<xsd:complexType name="control_node_notification">
+		<xsd:sequence>
+			<xsd:element name="tran_data" type="tran_data" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="abort_tran_data" type="abort_tran_data" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!-- tran_data type definition -->
+	<xsd:complexType name="tran_data">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="control_node" type="xsd:string" use="required" />
+				<xsd:attribute name="state" type="xsd:int" use="required" />
+				<xsd:attribute name="in_notify_adv_rsp" type="xsd:dateTime" use="optional" />
+				<xsd:attribute name="out_notify_adv" type="xsd:dateTime" use="optional" />
+				<xsd:attribute name="resubmit_time" type="xsd:dateTime" use="optional" />
+				<xsd:attribute name="tran_state_on_resubmit" type="xsd:int" use="optional" />
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+
+	<!-- abort_tran_data type definition -->
+	<xsd:complexType name="abort_tran_data">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="abort_state" type="xsd:int" use="required"/>
+				<xsd:attribute name="abort_time" type="xsd:dateTime" use="required"/>
+				<xsd:attribute name="abort_reason" type="xsd:int" use="required"/>
+				<xsd:attribute name="abort_rsp_code" type="xsd:string" use="optional"/>
+				<xsd:attribute name="abort_extended_rsp_code" type="xsd:string" use="optional"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	
+</xsd:schema>
+
+

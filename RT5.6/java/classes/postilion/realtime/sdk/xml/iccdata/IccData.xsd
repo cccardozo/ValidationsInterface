@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<!-- Root Element -->
+	<xsd:element name="IccData">
+		<xsd:complexType>
+			<xsd:all>
+				<xsd:element name="IccRequest" type="IccRequest" minOccurs="0"/>
+				<xsd:element name="IccResponse" type="IccResponse" minOccurs="0"/>
+			</xsd:all>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="PostilionPrivateIccResponseData">
+		<xsd:all>
+			<xsd:element name="ResponseCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CVRAuthenticationResults" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TVRAuthenticationResults" type="xsd:string" minOccurs="0"/>
+		</xsd:all>
+	</xsd:complexType>
+	
+	<xsd:complexType name="IssuerActionCode">
+		<xsd:all>
+			<xsd:element name="Default" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Denial" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Online" type="xsd:string" minOccurs="0"/>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="IccRequest">
+		<xsd:all>
+			<xsd:element name="AmountAuthorized" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="AmountOther" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ApplicationIdentifier" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ApplicationInterchangeProfile" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ApplicationTransactionCounter" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ApplicationUsageControl" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="AuthorizationResponseCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CardAuthenticationReliabilityIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CardAuthenticationResultsCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ChipConditionCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Cryptogram" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CryptogramInformationData" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CustomerExclusiveData" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CvmList" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CvmResults" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="FormFactorIndicator" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="InterfaceDeviceSerialNumber" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="IssuerActionCode" type="IssuerActionCode" minOccurs="0"/>
+			<xsd:element name="IssuerApplicationData" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="IssuerScriptResults" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TerminalApplicationVersionNumber" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TerminalCapabilities" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TerminalCountryCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TerminalType" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TerminalVerificationResult" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransactionCategoryCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransactionCurrencyCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransactionDate" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransactionSequenceCounter" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransactionType" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="UnpredictableNumber" type="xsd:string" minOccurs="0"/>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="IccResponse">
+		<xsd:all>
+			<xsd:element name="ApplicationTransactionCounter" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CardAuthenticationResultsCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="IssuerAuthenticationData" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="IssuerScriptTemplate1" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="IssuerScriptTemplate2" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PostilionPrivateIccResponseData" type="PostilionPrivateIccResponseData" minOccurs="0"/>
+		</xsd:all>
+	</xsd:complexType>
+</xsd:schema>

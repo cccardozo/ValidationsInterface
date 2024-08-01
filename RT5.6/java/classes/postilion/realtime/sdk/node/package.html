@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+
+	Package overview file for JavaDoc. Everything outside of 
+	the body tags is ignored by JavaDoc.
+
+-->
+</head>
+<body bgcolor="white">
+
+This package encapsulates the Postilion Realtime Node SDK.
+<P>
+This provides a generic, extensible framework for developing
+Postilion Realtime Terminal Driving Interfaces and Network 
+(or Interchange) Interfaces.
+</P>
+<P>
+Terminal Drivers are driven by the {@link PosEntityProcessor}
+class. Communications is also handled by this class. Terminal Drivers
+are backed by the {@link APosEntity} <em>driver</em> class.
+</P>
+<P>
+Network Interfaces are driven by the {@link InterchangeProcessor}
+class. Communications is handled by the {@link Interchange}
+or {@link PosEntityEmulatorInterchange} class. Each of these classes
+is backed by a <em>driver</em> class, {@link AInterchangeDriver}
+and {@link APosEntityEmulator} respectively.
+</P>
+<P>
+{@link SplitSinkInterchange} and {@link SplitSinkPosEntityEmulatorInterchange} 
+are extensions that provides a standardized solution when 
+authorization involving more than one Sink Node. Network 
+Interfaces can be combined with these extensions to 
+leverage existing functionality without requiring custom extensions.
+</P>
+<P>
+The communications functionality provided by the Node SDK
+can also be customized through the use of an {@link ASapFactory}
+implementation.
+</P>
+<P>
+Finally, the Node SDK exposes, and maintains, a number of useful
+Performance Counters through the Build Framework and the 
+Performance Monitoring Framework (see 
+{@link postilion.realtime.sdk.util.perfmon.PerfMap}.
+</P>
+	
+<!-- Put @see and @since tags down here. -->
+	
+</body>
+</html>

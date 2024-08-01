@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<!-- Root Element -->
+	<xsd:element name="CardManagementUpdateData">
+		<xsd:complexType>
+			<xsd:all>
+				<xsd:element name="Request" type="Request" minOccurs="0"/>
+			</xsd:all>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="Request">
+		<xsd:all>
+			<xsd:element name="Card" type="Card"/>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="Card">
+		<xsd:all>
+			<xsd:element name="PAN" type="xsd:string"/>
+			<xsd:element name="SequenceNumber" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ExpiryDate" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="CardActive" type="CardActive" minOccurs="0"/>
+			<xsd:element name="HoldResponseCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PINCodeSecure" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PINCodeInsecure" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="NewPINCodeSecure" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="OldPINCodeSecure" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ResetPINTryCountSecure" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ResetPINTryCountInsecure" type="xsd:string" minOccurs="0"/>
+		</xsd:all>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="CardActive">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Y"/>
+			<xsd:enumeration value="N"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

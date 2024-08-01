@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="PurchasingCardData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="LineItem"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="TaxAmount"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="Contact"/>
+      </xs:sequence>
+      <xs:attribute name="CustomerCode"/>
+      <xs:attribute name="CardAcceptorTaxId"/>
+      <xs:attribute name="CardAcceptorVatNr"/>
+      <xs:attribute name="CardAcceptorRefNr"/>
+      <xs:attribute name="CorporationVatNr"/>
+      <xs:attribute name="CustomerVatNr"/>
+      <xs:attribute name="MerchantOrderNumber"/>
+      <xs:attribute name="InvoiceNumber"/>
+      <xs:attribute name="OrderDate"/>
+      <xs:attribute name="PurchaseDate"/>
+      <xs:attribute name="CustomerBillingCode"/>
+      <xs:attribute name="PurchaseOrderNumber"/>
+      <xs:attribute name="TaxExempt"/>
+      <xs:attribute name="CommodityCode"/>
+      <xs:attribute name="Description"/>
+      <xs:attribute name="DiscountAmount"/>
+      <xs:attribute name="ShippingAmount"/>
+      <xs:attribute name="DutyAmount"/>
+      <xs:attribute name="TaxCollected"/>
+      <xs:attribute name="TotalAmount"/>
+      <xs:attribute name="Comment"/>
+      <xs:attribute name="PrivateData"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="LineItem">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="TaxAmount"/>
+      </xs:sequence>
+      <xs:attribute name="ItemNumber"/>
+      <xs:attribute name="ProductCode"/>
+      <xs:attribute name="CustomerCode"/>
+      <xs:attribute name="CommodityCode"/>
+      <xs:attribute name="VatReferenceNr"/>
+      <xs:attribute name="Description"/>
+      <xs:attribute name="Quantity"/>
+      <xs:attribute name="QuantityExponent"/>
+      <xs:attribute name="UnitOfMeasure"/>
+      <xs:attribute name="UnitPrice"/>
+      <xs:attribute name="Discount"/>
+      <xs:attribute name="DiscountRate"/>
+      <xs:attribute name="DiscountAmount"/>
+      <xs:attribute name="TotalAmount"/>
+      <xs:attribute name="TotalAmountType"/>
+      <xs:attribute name="SupplyType"/>
+      <xs:attribute name="Sign"/>
+      <xs:attribute name="PrivateData"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TaxAmount">
+    <xs:complexType>
+      <xs:attribute name="Type"/>
+      <xs:attribute name="Description"/>
+      <xs:attribute name="Included"/>
+      <xs:attribute name="Amount"/>
+      <xs:attribute name="Rate"/>
+      <xs:attribute name="RateExponent"/>
+      <xs:attribute name="CardAcceptorTaxId"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Contact">
+    <xs:complexType>
+      <xs:attribute name="Type"/>
+      <xs:attribute name="PostalCode"/>
+      <xs:attribute name="Name"/>
+      <xs:attribute name="Telephone"/>
+      <xs:attribute name="Address"/>
+      <xs:attribute name="City"/>
+      <xs:attribute name="State"/>
+      <xs:attribute name="Country"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

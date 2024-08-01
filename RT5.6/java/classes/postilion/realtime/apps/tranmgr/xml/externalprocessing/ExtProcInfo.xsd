@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	
+	<!-- root element -->
+	<xs:element name="ext_proc_info" type="ext_proc_info">
+		<xs:annotation>
+			<xs:documentation>
+				Contains state data relating to a multiple External Processing Transactions (EPT) 
+				handled as part of the external processing for the current customer transaction. 
+			</xs:documentation>
+		</xs:annotation>
+	</xs:element>	
+
+	<!-- ext_proc_info type definition -->
+	<xs:complexType name="ext_proc_info">
+		<xs:sequence>
+			<xs:element name="ept" type="ext_proc_tran" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>
+						Contains state data relating to a single External Processing Transaction (EPT) 
+						handled as part of the external processing for the current customer transaction. 
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- ext_proc_leg type definition -->
+	<xs:complexType name="ext_proc_tran">
+	
+		<!-- Tran number -->
+		<xs:attribute name="tran_nr" type="xs:long" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					The transaction number of the external processing transaction. 
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<!-- External processing sink node name -->
+		<xs:attribute name="sink" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					The name of the external processing sink node. 
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value = "20"/>
+				</xs:restriction>
+			</xs:simpleType>			
+		</xs:attribute>		
+		
+		<!-- External processing type -->
+		<xs:attribute name="type" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					The type of external processing performed.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value = "50"/>
+				</xs:restriction>
+			</xs:simpleType>			
+		</xs:attribute>
+		
+		<!-- External Processing Pipeline Position (EPPP) -->
+		<xs:attribute name="eppp" type="xs:int" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					The EPPP value of the external processing transaction.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<!-- External processing transaction state -->
+		<xs:attribute name="state" type="xs:int" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					The state of the external processing transaction.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>				
+		
+		<!-- External processing transaction response code -->
+		<xs:attribute name="rsp_code" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The response code of the external processing transaction.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value = "2"/>
+				</xs:restriction>
+			</xs:simpleType>			
+		</xs:attribute>
+		
+		<!-- External processing transaction request sent timestamp in miliseconds -->
+		<xs:attribute name="req_out" type="xs:long" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The number of milliseconds since January 1, 1970, 00:00:00 GMT up to the point in time
+					where the external processing transaction request message was sent out from the 
+					external processing node.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<!-- External processing transaction response received timestamp in miliseconds -->
+		<xs:attribute name="rsp_in" type="xs:long" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					The number of milliseconds since January 1, 1970, 00:00:00 GMT up to the point in time
+					where the external processing transaction response message was received at the 
+					external processing node.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+	</xs:complexType>
+	
+</xs:schema>
+
+

@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<!-- Root Element -->
+	<xsd:element name="StatementData">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice>
+					<xsd:element name="Request" type="Request" minOccurs="0"/>
+					<xsd:element name="Response" type="Response" minOccurs="0"/>
+				</xsd:choice>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="Request">
+		<xsd:all>
+			<xsd:element name="RequestRange" type="RequestRange" minOccurs="0"/>
+		</xsd:all>
+	</xsd:complexType>
+	
+	<xsd:complexType name="RequestRange">
+		<xsd:all>
+			<xsd:element name="StartDate" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="EndDate" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransactionCount" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="LastBlockReference" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="NextBlock" type="xsd:string" minOccurs="0"/>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="Response">
+		<xsd:all>
+			<xsd:element name="ResponseRange" type="ResponseRange"/>
+			<xsd:element name="CurrencyCode" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransactionList" type="TransactionList" minOccurs="0"/>
+			<xsd:element name="OpeningBalance" type="ListBalance" minOccurs="0"/>
+			<xsd:element name="ClosingBalance" type="ListBalance" minOccurs="0"/>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="ResponseRange">
+		<xsd:all>
+			<xsd:element name="StartDate" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="EndDate" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransactionCount" type="xsd:string"/>
+			<xsd:element name="BlockReference" type="xsd:string" minOccurs="0"/>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="TransactionList">
+		<xsd:sequence>
+			<xsd:element name="Transaction" type="Transaction" minOccurs="1" maxOccurs="unbounded"/>
+			<xsd:element name="IsComplete" type="xsd:string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ListBalance">
+		<xsd:sequence>
+			<xsd:element name="Balance" type="AmountWithBalance" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="Transaction">
+		<xsd:sequence>
+			<xsd:element name="TransactionType" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="FromAccountType" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="FromAccountID" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ToAccountType" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ToAccountID" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransactionDate" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="PostDate" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="TransactionAmount" type="AmountTypeWithCurrency" minOccurs="0"/>
+			<xsd:element name="PostAmount" type="Amount"/>
+			<xsd:element name="Surcharge" type="Amount" minOccurs="0"/>
+			<xsd:element name="Fee" type="Fee" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="Description" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="ReferenceNumber" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Balance" type="AmountWithBalance" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="AmountTypeWithCurrency">
+		<xsd:all>
+			<xsd:element name="Amount" type="xsd:string"/>
+			<xsd:element name="Sign" type="xsd:string"/>
+			<xsd:element name="CurrencyCode" type="xsd:string"/>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="Amount">
+		<xsd:all>
+			<xsd:element name="Amount" type="xsd:string"/>
+			<xsd:element name="Sign" type="xsd:string"/>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="Fee">
+		<xsd:all>
+			<xsd:element name="FeeDescription" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Amount" type="xsd:string"/>
+			<xsd:element name="Sign" type="xsd:string"/>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="AmountWithBalance">
+		<xsd:all>
+			<xsd:element name="BalanceType" type="xsd:string"/>
+			<xsd:element name="Amount" type="xsd:string"/>
+			<xsd:element name="Sign" type="xsd:string"/>
+		</xsd:all>
+	</xsd:complexType>
+</xsd:schema>

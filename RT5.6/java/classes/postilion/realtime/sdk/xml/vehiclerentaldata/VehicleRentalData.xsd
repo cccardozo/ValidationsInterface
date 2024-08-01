@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="VehicleRentalData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="RentalAgreementRef"/>
+        <xs:element minOccurs="0" ref="RenterName"/>
+        <xs:element minOccurs="0" ref="RentalLocationID"/>
+        <xs:element minOccurs="0" ref="RentalAddress"/>
+        <xs:element minOccurs="0" ref="RentalCity"/>
+        <xs:element minOccurs="0" ref="RentalStateOrRegion"/>
+        <xs:element minOccurs="0" ref="RentalCountry"/>
+        <xs:element minOccurs="0" ref="RentalDate"/>
+        <xs:element minOccurs="0" ref="RentalTime"/>
+        <xs:element minOccurs="0" ref="RentalClassIdentifier"/>
+        <xs:element minOccurs="0" ref="RentalRate"/>
+        <xs:element minOccurs="0" ref="RentalRateTimePeriod"/>
+        <xs:element minOccurs="0" ref="MaximumFreeMilesOrKms"/>
+        <xs:element minOccurs="0" ref="VehicleInsuranceIndicator"/>
+        <xs:element minOccurs="0" ref="AmountVehicleInsurance"/>
+        <xs:element minOccurs="0" ref="VehicleRegistrationNr"/>
+        <xs:element minOccurs="0" ref="OdometerReading"/>
+        <xs:element minOccurs="0" ref="ReturnLocationID"/>
+        <xs:element minOccurs="0" ref="ReturnAddress"/>
+        <xs:element minOccurs="0" ref="ReturnCity"/>
+        <xs:element minOccurs="0" ref="ReturnStateOrRegion"/>
+        <xs:element minOccurs="0" ref="ReturnCountry"/>
+        <xs:element minOccurs="0" ref="ReturnDate"/>
+        <xs:element minOccurs="0" ref="ReturnTime"/>
+        <xs:element minOccurs="0" ref="RentalDistance"/>
+        <xs:element minOccurs="0" ref="DistanceUnitOfMeasure"/>
+        <xs:element minOccurs="0" ref="AmountAdjusted"/>
+        <xs:element minOccurs="0" ref="AmountAdjustedIndicatorCode"/>
+        <xs:element minOccurs="0" ref="ProgramCode"/>
+        <xs:element minOccurs="0" ref="CustomerServicePhoneNr"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RentalAgreementRef" type="xs:string"/>
+  <xs:element name="RenterName" type="xs:string"/>
+  <xs:element name="RentalLocationID" type="xs:string"/>
+  <xs:element name="RentalAddress" type="xs:string"/>
+  <xs:element name="RentalCity" type="xs:string"/>
+  <xs:element name="RentalStateOrRegion" type="xs:string"/>
+  <xs:element name="RentalCountry" type="xs:string"/>
+  <xs:element name="RentalDate" type="xs:string"/>
+  <xs:element name="RentalTime" type="xs:string"/>
+  <xs:element name="RentalClassIdentifier" type="xs:string"/>
+  <xs:element name="RentalRate" type="xs:string"/>
+  <xs:element name="RentalRateTimePeriod" type="xs:string"/>
+  <xs:element name="MaximumFreeMilesOrKms" type="xs:string"/>
+  <xs:element name="VehicleInsuranceIndicator" type="xs:string"/>
+  <xs:element name="AmountVehicleInsurance" type="xs:string"/>
+  <xs:element name="VehicleRegistrationNr" type="xs:string"/>
+  <xs:element name="OdometerReading" type="xs:string"/>
+  <xs:element name="ReturnLocationID" type="xs:string"/>
+  <xs:element name="ReturnAddress" type="xs:string"/>
+  <xs:element name="ReturnCity" type="xs:string"/>
+  <xs:element name="ReturnStateOrRegion" type="xs:string"/>
+  <xs:element name="ReturnCountry" type="xs:string"/>
+  <xs:element name="ReturnDate" type="xs:string"/>
+  <xs:element name="ReturnTime" type="xs:string"/>
+  <xs:element name="RentalDistance" type="xs:string"/>
+  <xs:element name="DistanceUnitOfMeasure" type="xs:string"/>
+  <xs:element name="AmountAdjusted" type="xs:string"/>
+  <xs:element name="AmountAdjustedIndicatorCode" type="xs:string"/>
+  <xs:element name="ProgramCode" type="xs:string"/>
+  <xs:element name="CustomerServicePhoneNr" type="xs:string"/>
+</xs:schema>

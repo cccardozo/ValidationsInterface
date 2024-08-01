@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="FleetCardData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="LineItem"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="LineItem">
+    <xs:complexType>
+      <xs:attribute name="OilBrandName"/>
+      <xs:attribute name="ServiceType"/>
+      <xs:attribute name="ProductCode"/>
+      <xs:attribute name="UnitPriceExTax"/>
+      <xs:attribute name="UnitPriceIncTax"/>
+      <xs:attribute name="UnitOfMeasure"/>
+      <xs:attribute name="Quantity"/>
+      <xs:attribute name="QtyMinorUnit"/>
+      <xs:attribute name="ItemValueExTax"/>
+      <xs:attribute name="ItemValueIncTax"/>
+      <xs:attribute name="VehicleUsage"/>
+      <xs:attribute name="Odometer"/>
+      <xs:attribute name="VehicleReg"/>
+      <xs:attribute name="DriverId"/>
+      <xs:attribute name="PromptCode"/>
+      <xs:attribute name="DiscountAmount"/>
+      <xs:attribute name="TaxAmount"/>
+      <xs:attribute name="PrivateData"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
