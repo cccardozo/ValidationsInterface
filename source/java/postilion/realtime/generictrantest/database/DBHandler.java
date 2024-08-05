@@ -136,6 +136,7 @@ public class DBHandler {
 					}
 				} else {
 					sd.put("ERROR","NO EXITE TARJETA CLIENTE");
+					sd.put("ERROR_CODE","56");
 				}
 
 				JdbcManager.commit(con, stmt, rs);
@@ -159,12 +160,15 @@ public class DBHandler {
 		switch (pCode.substring(2, 4)) {
 		case "20":
 			sd.put("ERROR","NO CHECK ACCOUNT");
+			sd.put("ERROR_CODE","52");
 			break;
 		case "10":
 			sd.put("ERROR","NO SAVINGS ACCOUNT");
+			sd.put("ERROR_CODE","53");
 			break;
 		default:
 			sd.put("ERROR","Cuenta No Inscrita");
+			sd.put("ERROR_CODE","53");
 			break;
 		}
 	}

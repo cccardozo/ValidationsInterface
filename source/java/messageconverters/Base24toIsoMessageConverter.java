@@ -7,6 +7,7 @@ import java.util.Objects;
 import postilion.realtime.generictrantest.GenericInterfaceTranTest;
 import postilion.realtime.generictrantest.crypto.Crypto;
 import postilion.realtime.generictrantest.database.DBHandler;
+import postilion.realtime.generictrantest.udp.Client;
 import postilion.realtime.sdk.crypto.CryptoCfgManager;
 import postilion.realtime.sdk.crypto.CryptoManager;
 import postilion.realtime.sdk.crypto.DesKwp;
@@ -310,7 +311,7 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				DBHandler.getClientData(ps.toString(), p_msg.getTrack2Data().getPan(), ps.getFromAccount(), p_msg.getTrack2Data().getExpiryDate(),
 						"0000000000000000", field_structure_w);			
 				
-				
+				Logger.logLine(field_structure_w.toMsgString(), enableLog);
 				
 				if(field_structure_w.get("HOLDRSPCODE") == null && field_structure_w.get("ERROR") == null) {
 					result = pinValidation(p_msg,field_structure_w,enableLog);
@@ -324,8 +325,8 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 					}
 				} else {
 					p_msg.putMsgType(Iso8583.MsgType._0210_TRAN_REQ_RSP);
-					if(field_structure_w.get("ERROR") != null && field_structure_w.get("ERROR").equals("NO EXITE TARJETA CLIENTE"))
-						p_msg.putField(Iso8583.Bit._039_RSP_CODE, "56");
+					if(field_structure_w.get("ERROR") != null && field_structure_w.get("ERROR_CODE") != null)
+						p_msg.putField(Iso8583.Bit._039_RSP_CODE, field_structure_w.get("ERROR_CODE"));
 					else
 						p_msg.putField(Iso8583.Bit._039_RSP_CODE, field_structure_w.get("HOLDRSPCODE"));
 				}
@@ -477,6 +478,11 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				String pan = p_msgIso.getTrack2Data().getPan();
 				String pinOffset = field_structure_w.get("PINOFFSET");
 				String idDoc = p_msgIso.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).substring(0,2) + p_msgIso.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).substring(p_msgIso.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).length()-10);
+				
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("keyName:" + keyName));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("pinBlock:" + pinBlock));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("pan:" + pan));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("pinOffset:" + pinOffset));
 				Logger.logLine("keyName:" + keyName, enableLog);
 				Logger.logLine("pinBlock:" + pinBlock, enableLog);
 				Logger.logLine("pan:" + pan, enableLog);
@@ -485,6 +491,8 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				CryptoCfgManager crypcfgman = CryptoManager.getStaticConfiguration();
 				DesKwp kwpChannel = crypcfgman.getKwp(keyName);
 				DesKwp kwpPinKey = crypcfgman.getKwp("HKPINKEY");
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("kwpChannel:" + kwpChannel.getName()));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("kwpPinKey:" + kwpPinKey.getName()));
 				Logger.logLine("kwpChannel:" + kwpChannel.getName(), enableLog);
 				Logger.logLine("kwpPinKey:" + kwpPinKey.getName(), enableLog);
 				Logger.logLine("kwpChannel.getValueUnderKsk():" + kwpChannel.getValueUnderKsk(), enableLog);
@@ -496,7 +504,8 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				validPin = crypto.validatePin(pinBlockConverted, kwpChannel.getValueUnderKsk(), pinOffset, pan, kwpPinKey.getValueUnderKsk(), enableLog);
 				field_structure_w.put("PINVALID", validPin ? "TRUE" : "FALSE");
 				
-				Logger.logLine("newPin:" + validPin, enableLog);
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("validPin:" + validPin));
+				Logger.logLine("validPin:" + validPin, enableLog);
 			} catch (XCrypto e) {
 				field_structure_w.put("ERROR", "ERROR CRIPTOGRAFIA");
 				Logger.logLine("KWP ERROR: " + e.toString(), enableLog);

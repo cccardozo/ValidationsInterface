@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.json.simple.parser.JSONParser;
 
 import enlistGeneralMessage.EnlistMessageB24Iso;
+import postilion.realtime.generictrantest.udp.Client;
 import postilion.realtime.sdk.eventrecorder.EventRecorder;
 import postilion.realtime.sdk.message.IMessage;
 import postilion.realtime.sdk.message.bitmap.BitmapMessage;
@@ -32,6 +33,10 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 	public static String ipACryptotalla;
 	public static int portACryptotalla;
 	private boolean enableLog;
+	public String ipUdpServer = "0";
+	public String portUdpServer = "0";
+	public String portUdpClient = "0";
+	public static Client udpClient = null;
 	
 	@Override
 	public IMessage newMsg(byte[] data) throws Exception {
@@ -54,13 +59,7 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 			}
 			return msg;
 		} catch (Exception e) {
-			String text = new String(data, SystemConstants.VALUE_TYPE_CODING);
-			/*
-			 * udpClient.sendData( Client.getMsgKeyValue("N/A",
-			 * "ERRISO30 Exception en Mensaje: " + text, "LOG", nameInterface));
-			 * EventReporter.reportGeneralEvent(this.nameInterface,
-			 * GenericInterface.class.getName(), e, "Unknown", "newMsg", this.udpClient);
-			 */
+			EventRecorder.recordEvent(e);
 		}
 		return null;
 	}
@@ -74,6 +73,8 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 		
 		loadParameters(userParams[0]);
 		fillKeys();
+		
+		udpClient = new Client(ipUdpServer, portUdpServer, portUdpClient);
 		
 		keysHSM.forEach((k,v) -> {
 			Logger.logLine("LlavesHSM key: " + k + " with value: " + v, enableLog);
@@ -103,7 +104,9 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 				routeKeysHSM = parameters.get("routeKeysHSM").toString();
 				process = parameters.get("Process").toString();
 				enableLog = Boolean.valueOf(parameters.get("EnableLog").toString());
-				
+				ipUdpServer = parameters.get("IP_UDP_SERVER").toString();
+				portUdpServer = parameters.get("PORT_UDP_SERVER").toString();
+				portUdpClient = parameters.get("PORT_UDP_CLIENT").toString();
 			}
 			
 			Logger.logLine("typeMessage:"+typeMessage, enableLog);
@@ -111,6 +114,9 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 			Logger.logLine("ipACryptotalla:"+ipACryptotalla, enableLog);
 			Logger.logLine("portACryptotalla:"+portACryptotalla, enableLog);
 			Logger.logLine("routeKeysHSM:"+routeKeysHSM, enableLog);
+			Logger.logLine("ipUdpServer:"+ipUdpServer, enableLog);
+			Logger.logLine("portUdpServer:"+portUdpServer, enableLog);
+			Logger.logLine("portUdpClient:"+portUdpClient, enableLog);
 			
 		} catch (Exception e) {
 			EventRecorder.recordEvent(e);
@@ -227,6 +233,9 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 		Action action = new Action();
 		try {
 			keysHSM.clear();
+			
+			if (udpClient != null)
+				udpClient.close();
 			
 			init(interchange);
 		} catch (Exception e) {

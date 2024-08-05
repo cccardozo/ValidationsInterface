@@ -8,6 +8,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
 import postilion.realtime.generictrantest.GenericInterfaceTranTest;
+import postilion.realtime.generictrantest.udp.Client;
 import util.Logger;
 import postilion.realtime.sdk.crypto.CryptoCfgManager;
 import postilion.realtime.sdk.crypto.CryptoManager;
@@ -100,8 +101,10 @@ public class Crypto {
 	public boolean validatePin(String pinBlock, String kwp, String pinOffset, String pan, String kvp, boolean log) {
 		boolean result = false;
 		String command32 = "<32#2#3#" + pinBlock + "#" + kwp + "#0123456789012345#" + pinOffset + "#" + pan.substring(4) + "#F#4#" + kvp + "#F#" + pan.substring(3, 15) + "#>";
+		GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command31:" + command32));
 		Logger.logLine("command31:" + command32, log);
 		String resCommand32[] = this.hsmComm.sendCommand(command32, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
+		GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("resCommand31:" + Arrays.toString(resCommand32)));
 		Logger.logLine("resCommand31:" + Arrays.toString(resCommand32), log);
 		if(resCommand32[1].equals("Y"))
 			result = true;
@@ -128,8 +131,10 @@ public class Crypto {
 		String result = "FFFFFFFFFFFFFFFF";
 		try {
 			String command33 = "<33#13#" + kwpChannel + "#" + kwpChannel + "#" + pinBlock + "#F#" + idDoc + "#>";
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command33:" + command33));
 			Logger.logLine("command33:" + command33, log);
 			String resCommand33[] = this.hsmComm.sendCommand(command33, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("resCommand33:" + Arrays.toString(resCommand33)));
 			Logger.logLine("resCommand33:" + Arrays.toString(resCommand33), log);
 			if(resCommand33[2].equals("Y"))
 				result = resCommand33[1];
