@@ -6,8 +6,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.simple.parser.JSONParser;
 
-import enlistGeneralMessage.EnlistMessageB24Iso;
+import postilion.realtime.generictrantest.enlistGeneralMessage.EnlistMessageB24Iso;
+import postilion.realtime.generictrantest.streamBase24ATM.Base24Atm;
+import postilion.realtime.generictrantest.systemConstans.SystemConstants;
 import postilion.realtime.generictrantest.udp.Client;
+import postilion.realtime.generictrantest.util.Logger;
 import postilion.realtime.sdk.eventrecorder.EventRecorder;
 import postilion.realtime.sdk.message.IMessage;
 import postilion.realtime.sdk.message.bitmap.BitmapMessage;
@@ -18,9 +21,6 @@ import postilion.realtime.sdk.node.AInterchangeDriverEnvironment;
 import postilion.realtime.sdk.node.Action;
 import postilion.realtime.sdk.node.XNodeParameterValueInvalid;
 import postilion.realtime.sdk.util.convert.Pack;
-import streamBase24ATM.Base24Atm;
-import systemConstans.SystemConstants;
-import util.Logger;
 
 public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 	private String typeMessage;
@@ -152,6 +152,8 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 			throws Exception {
 		Action actionToTake = new Action();
 		EnlistMessageB24Iso enlistMessageB24Iso = new EnlistMessageB24Iso();
+		Iso8583Post msgToTM = new Iso8583Post();
+		Iso8583 msgB24Rsp = new Iso8583();
 		
 		switch (msg.getField(Iso8583.Bit._041_CARD_ACCEPTOR_TERM_ID).substring(14, 15)) {
 		case "1":
@@ -164,7 +166,16 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 			actionToTake.putMsgToRemote(enlistMessageB24Iso.validateCvv(msg,enableLog,process));
 			break;
 		case "4":
-			actionToTake.putMsgToRemote(enlistMessageB24Iso.changePin(msg,enableLog,process));
+			msgB24Rsp = enlistMessageB24Iso.changePin(msg, msgToTM, enableLog, process);
+			
+			Logger.logLine("msgB24Rsp: Salida: " + msgB24Rsp, enableLog);
+			Logger.logLine("msgToTM: Salida: " + msgToTM, enableLog);
+			actionToTake.putMsgToRemote(msgB24Rsp);
+			if(msgB24Rsp.isFieldSet(Iso8583.Bit._039_RSP_CODE)
+					&& msgB24Rsp.getField(Iso8583.Bit._039_RSP_CODE).equals("00")) {
+				actionToTake.putMsgToTranmgr(msgToTM);
+			}
+				
 			break;
 
 		default:
@@ -187,10 +198,15 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 			throws Exception {
 		Action respToRemoto = new Action();
 		EnlistMessageB24Iso enlistMessageB24Iso = new EnlistMessageB24Iso();
-		if (typeMessage.equals(SystemConstants.PARAM_MSJ_B24)) {
-			respToRemoto.putMsgToRemote(enlistMessageB24Iso.copyMessagetoB24(msg));
+//		if (typeMessage.equals(SystemConstants.PARAM_MSJ_B24)) {
+//			respToRemoto.putMsgToRemote(enlistMessageB24Iso.copyMessagetoB24(msg));
+//		} else {
+//			respToRemoto.putMsgToRemote(msg);
+//		}
+		if(process.equals("VALIDATE")) {
+			return new Action();
 		} else {
-			respToRemoto.putMsgToRemote(msg);
+			respToRemoto.putMsgToRemote(enlistMessageB24Iso.copyMessagetoB24(msg));
 		}
 		return respToRemoto;
 	}

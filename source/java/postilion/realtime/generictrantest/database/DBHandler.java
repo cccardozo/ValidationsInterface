@@ -8,10 +8,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import postilion.realtime.generictrantest.crypto.Crypto;
+import postilion.realtime.generictrantest.util.Logger;
 import postilion.realtime.sdk.eventrecorder.EventRecorder;
 import postilion.realtime.sdk.jdbc.JdbcManager;
 import postilion.realtime.sdk.message.bitmap.StructuredData;
-import util.Logger;
 
 /**
  * This class search for information in the realtime database and loads the
@@ -115,6 +115,7 @@ public class DBHandler {
 						if (accountTypeClient == null || accountNumber == null) {
 							sd.put("ERROR","CUENTA NO ASOCIADA");
 							sd.put("PINOFFSET", pinOffset);
+							sd.put("ERROR_CODE","56");
 
 						} else {
 							sd.put("P_CODE", processingCode);
@@ -143,6 +144,7 @@ public class DBHandler {
 				JdbcManager.commit(con, cst, rs);
 			} catch (SQLException e) {
 				sd.put("ERROR","Database Connection Failure.");
+				sd.put("ERROR_CODE","06");
 				EventRecorder.recordEvent(e);
 				EventRecorder.recordEvent(
 						new Exception("SQL Ex: " + e.toString()));
@@ -189,11 +191,14 @@ public class DBHandler {
 
 	    try (Connection con = JdbcManager.getConnection(Account.POSTCARD_DATABASE)) {
 	        String panHash = Crypto.getHashPanCNB(pan);
+	        Logger.logLine("panHash:" + panHash, enableLog);
 
-	        if (checkAndUpdate(con, issuer, "A", newOffset, panHash, expiryDate, enableLog) ||
-	            checkAndUpdate(con, issuer, "B", newOffset, panHash, expiryDate, enableLog)) {
+	        if (checkAndUpdate(con, issuer, "A", newOffset, panHash, expiryDate, enableLog)) 
 	            result = true;
-	        }
+	        
+	        if (checkAndUpdate(con, issuer, "B", newOffset, panHash, expiryDate, enableLog)) 
+	            result = true;
+	         
 	        JdbcManager.commit(con);
 	    } catch (SQLException e) {
 	        EventRecorder.recordEvent(new Exception("SQL: " + e.toString()));
@@ -223,17 +228,27 @@ public class DBHandler {
 	    try (PreparedStatement psSelect = con.prepareStatement(selectQuery)) {
 	        psSelect.setString(1, panHash);
 	        psSelect.setString(2, expiryDate);
-	        Logger.logLine("CONSULTA PREVIA " + psSelect.toString(), enableLog);
+	        Logger.logLine("selectQuery: " + selectQuery, enableLog);
+	        Logger.logLine("CONSULTA PREVIA: " + psSelect, enableLog);
+	        Logger.logLine("CONSULTA PREVIA Metadata:" + psSelect.getMetaData(), enableLog);
+	        Logger.logLine("CONSULTA PREVIA Parametermetadata:" + psSelect.getParameterMetaData(), enableLog);
+	        Logger.logLine("CONSULTA PREVIA toString:" + psSelect.toString(), enableLog);
 
 	        try (ResultSet rs = psSelect.executeQuery()) {
 	            if (rs.next()) {
+	            	Logger.logLine("Hay datos rs.toString():" + rs.toString(), enableLog);
 	                String updateQuery = String.format(Queries.UPDATE_CARD_OFFSET, issuer, suffix);
 	                try (PreparedStatement psUpdate = con.prepareStatement(updateQuery)) {
+	                	Logger.logLine("updateQuery: " + updateQuery, enableLog);
+	        	        Logger.logLine("UPDATE: " + psUpdate, enableLog);
+	        	        Logger.logLine("UPDATE Metadata:" + psUpdate.getMetaData(), enableLog);
+	        	        Logger.logLine("UPDATE Parametermetadata:" + psUpdate.getParameterMetaData(), enableLog);
+	        	        Logger.logLine("UPDATE toString:" + psUpdate.toString(), enableLog);
 	                    psUpdate.setString(1, newOffset);
 	                    psUpdate.setString(2, panHash);
 	                    psUpdate.setString(3, expiryDate);
-	                    Logger.logLine("UPDATE " + psUpdate.toString(), enableLog);
 	                    int rows = psUpdate.executeUpdate();
+	                    Logger.logLine("UPDATE rows:" + rows, enableLog);
 	                    return rows > 0;
 	                }
 	            }

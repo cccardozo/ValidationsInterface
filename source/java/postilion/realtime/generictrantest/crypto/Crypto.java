@@ -9,7 +9,7 @@ import javax.crypto.spec.DESKeySpec;
 
 import postilion.realtime.generictrantest.GenericInterfaceTranTest;
 import postilion.realtime.generictrantest.udp.Client;
-import util.Logger;
+import postilion.realtime.generictrantest.util.Logger;
 import postilion.realtime.sdk.crypto.CryptoCfgManager;
 import postilion.realtime.sdk.crypto.CryptoManager;
 import postilion.realtime.sdk.crypto.DesKvc;
