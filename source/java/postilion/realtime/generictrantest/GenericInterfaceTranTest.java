@@ -27,6 +27,7 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 	private String transactionIdentification;
 	private String routeKeysHSM;
 	private String process;
+	public static String modeConnection;
 	public static Map<String, Object> infoTrasactionIdentidicator = new ConcurrentHashMap<String, Object>(); 
 	public static Map<String, String> keysHSM = new ConcurrentHashMap<String, String>(); 
 	public String nameInterface = "";
@@ -36,7 +37,11 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 	public String ipUdpServer = "0";
 	public String portUdpServer = "0";
 	public String portUdpClient = "0";
+	public String ipUdpServerAtalla = "0";
+	public String portUdpServerAtalla = "0";
+	public String portUdpClientAtalla = "0";
 	public static Client udpClient = null;
+	public static Client udpClientAtalla = null;
 	
 	@Override
 	public IMessage newMsg(byte[] data) throws Exception {
@@ -75,6 +80,7 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 		fillKeys();
 		
 		udpClient = new Client(ipUdpServer, portUdpServer, portUdpClient);
+		udpClientAtalla = new Client(ipUdpServerAtalla, portUdpServerAtalla, portUdpClientAtalla);
 		
 		keysHSM.forEach((k,v) -> {
 			Logger.logLine("LlavesHSM key: " + k + " with value: " + v, enableLog);
@@ -107,6 +113,10 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 				ipUdpServer = parameters.get("IP_UDP_SERVER").toString();
 				portUdpServer = parameters.get("PORT_UDP_SERVER").toString();
 				portUdpClient = parameters.get("PORT_UDP_CLIENT").toString();
+				modeConnection = parameters.get("MODE_CONNECTION").toString();
+				ipUdpServerAtalla = parameters.get("IP_UDP_SERVER_ATALLA").toString();
+				portUdpServerAtalla = parameters.get("PORT_UDP_SERVER_ATALLA").toString();
+				portUdpClientAtalla = parameters.get("PORT_UDP_CLIENT_ATALLA").toString();
 			}
 			
 			Logger.logLine("typeMessage:"+typeMessage, enableLog);

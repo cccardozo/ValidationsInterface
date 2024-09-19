@@ -8,10 +8,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
+import postilion.realtime.generictrantest.GenericInterfaceTranTest;
 import postilion.realtime.sdk.crypto.CryptoCfgManager;
 import postilion.realtime.sdk.crypto.CryptoManager;
 import postilion.realtime.sdk.crypto.ICryptoConnection;
 import postilion.realtime.sdk.crypto.XCryptoCommsFailure;
+import postilion.realtime.sdk.util.XPostilion;
 
 public class HSMDirectorBuild {
 	private String command = null;
@@ -30,7 +32,6 @@ public class HSMDirectorBuild {
 		try {
 			socket.close();
 			openConnectHSM(ip, puerto);
-			System.out.println("Reconexion reset socket <<<" + ip + ":" + puerto + ">>>");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -39,16 +40,25 @@ public class HSMDirectorBuild {
 	public String sendCommand(String commandHSM, String ip, int puerto) {
 		String data = null;
 		try {
-			data = processMessage(commandHSM);
-			if (data == null || errorHsm.equals(data)) {
-				socket.close();
-				openConnectHSM(ip, puerto);
+			
+			if(GenericInterfaceTranTest.modeConnection.toLowerCase().equals("udp")) {
+				data = GenericInterfaceTranTest.udpClientAtalla.sendMsgToAtalla(commandHSM, true);
+			} else {
 				data = processMessage(commandHSM);
-				System.out.println("Reconexion socket <<<" + ip + ":" + puerto + ">>>");
+				if (data == null || errorHsm.equals(data)) {
+					socket.close();
+					openConnectHSM(ip, puerto);
+					data = processMessage(commandHSM);
+				}
 			}
+			
+			
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (XPostilion e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

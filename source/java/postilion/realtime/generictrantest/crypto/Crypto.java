@@ -100,14 +100,23 @@ public class Crypto {
 	 */
 	public boolean validatePin(String pinBlock, String kwp, String pinOffset, String pan, String kvp, boolean log) {
 		boolean result = false;
-		String command32 = "<32#2#3#" + pinBlock + "#" + kwp + "#0123456789012345#" + pinOffset + "#" + pan.substring(4) + "#F#4#" + kvp + "#F#" + pan.substring(3, 15) + "#>";
-		GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command31:" + command32));
-		Logger.logLine("command31:" + command32, log);
-		String resCommand32[] = this.hsmComm.sendCommand(command32, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
-		GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("resCommand31:" + Arrays.toString(resCommand32)));
-		Logger.logLine("resCommand31:" + Arrays.toString(resCommand32), log);
-		if(resCommand32[1].equals("Y"))
-			result = true;
+		
+		try {
+			String command32 = "<32#2#3#" + pinBlock + "#" + kwp + "#0123456789012345#" + pinOffset + "#" + pan.substring(4) + "#F#4#" + kvp + "#F#" + pan.substring(3, 15) + "#>";
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command31:" + command32));
+			Logger.logLine("command31:" + command32, log);
+			String resCommand32[] = this.hsmComm.sendCommand(command32, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("resCommand31:" + Arrays.toString(resCommand32)));
+			Logger.logLine("resCommand31:" + Arrays.toString(resCommand32), log);
+			if(resCommand32[1].equals("Y"))
+				result = true;
+		} catch (Exception e) {
+			EventRecorder.recordEvent(e);
+			e.printStackTrace();
+		} finally {
+			this.hsmComm.closeConnectHSM();
+		}
+		
 		return result;
 	}
 	
@@ -142,6 +151,8 @@ public class Crypto {
 		}catch(Exception e) {
 			Logger.logLine("Convert error: " + e.toString(), log);
 			EventRecorder.recordEvent(new Exception(e.toString()));
+		} finally {
+			this.hsmComm.closeConnectHSM();
 		}
 		
 		
@@ -183,6 +194,8 @@ public class Crypto {
 			Logger.logLine("Convert error: " + e.toString(), log);
 			EventRecorder.recordEvent(new Exception(e.toString()));
 			result = "FFFF";
+		} finally {
+			this.hsmComm.closeConnectHSM();
 		}
 		return result;
 		

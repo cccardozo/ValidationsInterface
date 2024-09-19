@@ -4,14 +4,16 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+import postilion.realtime.generictrantest.util.Logger;
 import postilion.realtime.sdk.eventrecorder.EventRecorder;
+import postilion.realtime.sdk.util.XPostilion;
 
 /**
  * This class deifines a basic UDP client
@@ -221,6 +223,58 @@ public class Client {
 	
 	public static byte[] formatDatatoSend(String value) {
 		return ("RN_VALIDACIONPIN_DATA="+value).getBytes();
+	}
+	
+	/**
+	 * Open a socket to send data over UDP protocol
+	 * 
+	 * @param data            to send
+	 * @param waitForResponse
+	 * @throws XPostilion
+	 */
+	public String sendMsgToAtalla(String key, boolean log) throws XPostilion {
+		String dataResponse = "";
+
+		try {
+
+			Logger.logLine("key: " + key, log);
+			byte[] data = key.getBytes();
+
+			try {
+				DatagramSocket socket = new DatagramSocket();
+				socket.setSoTimeout(100);
+//				DatagramPacket request = new DatagramPacket(data, data.length, ipAddress, port);
+				Logger.logLine("data: " + data, log);
+				Logger.logLine("data.length: " + data.length, log);
+				Logger.logLine("ipAddress: " + ipAddress, log);
+				Logger.logLine("port: " + port, log);
+//				DatagramPacket request = new DatagramPacket(data, data.length, ipAddress,
+//						50000 + Integer.parseInt(p11.substring(p11.length() - 1)));
+				DatagramPacket request = new DatagramPacket(data, data.length, ipAddress, port);
+				Logger.logLine("request getSocketAddress: " + request.getSocketAddress(), log);
+				Logger.logLine("request getAddress: " + request.getAddress(), log);
+				Logger.logLine("Send request: " + request.getData(), log);
+				socket.send(request);
+				byte[] bufer = new byte[4072];// 4072
+				DatagramPacket respuesta = new DatagramPacket(bufer, bufer.length);
+				socket.receive(respuesta);
+				Logger.logLine("respuesta.getData()).trim(): " + respuesta.getData(), log);
+				dataResponse = new String(respuesta.getData()).trim();
+				Logger.logLine("data incoming: " + dataResponse, log);
+				socket.close();
+			} catch (SocketTimeoutException e) {
+				dataResponse = "TIMEOUT";
+			} catch (IOException e) {
+				EventRecorder.recordEvent(e);
+				dataResponse = "TIMEOUT";
+			}
+
+		} catch (Exception e) {
+
+			EventRecorder.recordEvent(e);
+			dataResponse = "TIMEOUT";
+		}
+		return dataResponse;
 	}
 
 }
