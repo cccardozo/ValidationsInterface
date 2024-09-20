@@ -261,14 +261,15 @@ public class DBHandler {
 	}
 
 	/** CARD STATUS **/
-	
+
 	/**
 	 * @param issuer     El emisor de la tarjeta.
-	 * @param pan		 El hash del numero de cuenta primaria (PAN) de la tarjeta.
+	 * @param pan        El hash del numero de cuenta primaria (PAN) de la tarjeta.
 	 * @param expiryDate La fecha de expiracion de la tarjeta.
-	 * @param enableLog	 Indica si se debe habilitar el registro de logs.
-	 * @return true  	 Retorna true si existe la tarjeta, de lo contrario retorna false.
-	 * **/
+	 * @param enableLog  Indica si se debe habilitar el registro de logs.
+	 * @return true Retorna true si existe la tarjeta, de lo contrario retorna
+	 *         false.
+	 **/
 	public static boolean Card(String issuer, String pan, String expiryDate, boolean enableLog) {
 
 		Logger.logLine("Card: ", enableLog);
@@ -297,21 +298,22 @@ public class DBHandler {
 	}
 
 	/**
-	 * @param con		 La conexion a la base de datos.
+	 * @param con        La conexion a la base de datos.
 	 * @param issuer     El emisor de la tarjeta.
-	 * @param suffix 	 El sufijo de la tabla (A o B).
-	 * @param panHash	 El hash del numero de cuenta primaria (PAN) de la tarjeta.
+	 * @param suffix     El sufijo de la tabla (A o B).
+	 * @param panHash    El hash del numero de cuenta primaria (PAN) de la tarjeta.
 	 * @param expiryDate La fecha de expiracion de la tarjeta.
-	 * @param enableLog	 Indica si se debe habilitar el registro de logs.
-	 * @return true  	 Retorna true si existe la tarjeta, de lo contrario retorna false.
-	 * **/
+	 * @param enableLog  Indica si se debe habilitar el registro de logs.
+	 * @return true Retorna true si existe la tarjeta, de lo contrario retorna
+	 *         false.
+	 **/
 	private static boolean cardExist(Connection con, String issuer, String suffix, String panHash, String expiryDate,
 			boolean enableLog) {
 		String selectPanQuery = String.format(Queries.SELECT_EXIST_CARD_WITH_PAN, issuer, suffix);
 		try (PreparedStatement psSelect = con.prepareStatement(selectPanQuery)) {
 			psSelect.setString(1, panHash);
 			psSelect.setString(2, expiryDate);
-			Logger.logLine("selectQuery: " + selectPanQuery, enableLog);
+			Logger.logLine("selectPanQuery: " + selectPanQuery, enableLog);
 			Logger.logLine("CONSULTA PREVIA: " + psSelect, enableLog);
 			Logger.logLine("CONSULTA PREVIA Metadata:" + psSelect.getMetaData(), enableLog);
 			Logger.logLine("CONSULTA PREVIA Parametermetadata:" + psSelect.getParameterMetaData(), enableLog);
@@ -333,29 +335,23 @@ public class DBHandler {
 	/**
 	 * @param issuer     El emisor de la tarjeta.
 	 * @param customerId El ID del cliente.
-	 * @param enableLog	 Indica si se debe habilitar el registro de logs.
-	 * @return true  	 Retorna true si el company_name es igual a N - Normal, de lo contrario retorna false.
-	 * **/
+	 * @param enableLog  Indica si se debe habilitar el registro de logs.
+	 * @return true Retorna true si el company_name es igual a N - Normal, de lo
+	 *         contrario retorna false.
+	 **/
 	public static boolean Company(String issuer, String customerId, boolean enableLog) {
-
-		Logger.logLine("DBHandler public static boolean Company: ", enableLog);
 
 		boolean result = false;
 
 		try (Connection con = JdbcManager.getConnection(Account.POSTCARD_DATABASE)) {
 
-			String companyNameA = getCompanyName(con, issuer, "A", customerId, enableLog);
-			String companyNameB = getCompanyName(con, issuer, "B", customerId, enableLog);
+			String currTableCards = getCurrTableCards(con, issuer, enableLog);
+			String companyName = getCompanyName(con, issuer, currTableCards, customerId, enableLog);
 
-			if ("N - Normal".equals(companyNameA)) {
+			if ("N - Normal".equals(companyName)) {
 				result = true;
 			}
-			Logger.logLine("DBHandler getCompanyName A: " + result, enableLog);
-
-			if ("N - Normal".equals(companyNameB)) {
-				result = true;
-			}
-			Logger.logLine("DBHandler getCompanyName B: " + result, enableLog);
+			Logger.logLine("getCompanyName: " + result, enableLog);
 
 			JdbcManager.commit(con);
 		} catch (SQLException e) {
@@ -369,23 +365,22 @@ public class DBHandler {
 	}
 
 	/**
-	 * @param con		 La conexion a la base de datos.
+	 * @param con        La conexion a la base de datos.
 	 * @param issuer     El emisor de la tarjeta.
-	 * @param suffix 	 El sufijo de la tabla (A o B).
+	 * @param suffix     El sufijo de la tabla (A o B).
 	 * @param customerId El ID del cliente.
-	 * @param enableLog	 Indica si se debe habilitar el registro de logs.
-	 * @return true  	 Retorna el valor de company_name.
-	 * **/
+	 * @param enableLog  Indica si se debe habilitar el registro de logs.
+	 * @return true Retorna el valor de company_name.
+	 **/
 	private static String getCompanyName(Connection con, String issuer, String suffix, String customerId,
 			boolean enableLog) {
 
 		String selectCompanyNameQuery = String.format(Queries.SELECT_EXIST_CARD_WITH_COMPANY_NAME, issuer, suffix);
-		Logger.logLine("Generated SQL Query: " + selectCompanyNameQuery, enableLog);
 		String companyName = null;
 
 		try (PreparedStatement psSelectCompanyName = con.prepareStatement(selectCompanyNameQuery)) {
 			psSelectCompanyName.setString(1, customerId);
-			Logger.logLine("selectQuery: " + selectCompanyNameQuery, enableLog);
+			Logger.logLine("selectCompanyNameQuery: " + selectCompanyNameQuery, enableLog);
 			Logger.logLine("CONSULTA PREVIA: " + psSelectCompanyName, enableLog);
 			Logger.logLine("CONSULTA PREVIA Metadata:" + psSelectCompanyName.getMetaData(), enableLog);
 			Logger.logLine("CONSULTA PREVIA Parametermetadata:" + psSelectCompanyName.getParameterMetaData(),
@@ -395,9 +390,7 @@ public class DBHandler {
 			try (ResultSet rs = psSelectCompanyName.executeQuery()) {
 				if (rs.next()) {
 					companyName = rs.getString("company_name");
-					Logger.logLine("DBHandler companyName rs: " + companyName, enableLog);
-				} else {
-					Logger.logLine("No records found for customer_id: " + customerId, enableLog);
+					Logger.logLine("companyName rs: " + companyName, enableLog);
 				}
 			}
 		} catch (SQLException e) {
@@ -406,6 +399,39 @@ public class DBHandler {
 		}
 
 		return companyName;
+	}
+
+	/**
+	 * @param con       La conexion a la base de datos.
+	 * @param issuer    El emisor de la tarjeta.
+	 * @param enableLog Indica si se debe habilitar el registro de logs.
+	 * @return true Retorna el valor de curr_table_cards.
+	 **/
+	private static String getCurrTableCards(Connection con, String issuer, boolean enableLog) {
+
+		String selectCurrTableQuery = String.format(Queries.SELECT_CURR_TABLE_CARDS);
+		String currTable = null;
+
+		try (PreparedStatement psSelectCurrTable = con.prepareStatement(selectCurrTableQuery)) {
+			psSelectCurrTable.setString(1, issuer);
+			Logger.logLine("selectCurrTableQuery: " + selectCurrTableQuery, enableLog);
+			Logger.logLine("CONSULTA PREVIA: " + psSelectCurrTable, enableLog);
+			Logger.logLine("CONSULTA PREVIA Metadata:" + psSelectCurrTable.getMetaData(), enableLog);
+			Logger.logLine("CONSULTA PREVIA Parametermetadata:" + psSelectCurrTable.getParameterMetaData(), enableLog);
+			Logger.logLine("CONSULTA PREVIA toString:" + psSelectCurrTable.toString(), enableLog);
+
+			try (ResultSet rs = psSelectCurrTable.executeQuery()) {
+				if (rs.next()) {
+					currTable = rs.getString("curr_table_cards");
+					Logger.logLine("currTable rs: " + currTable, enableLog);
+				}
+			}
+		} catch (SQLException e) {
+			EventRecorder.recordEvent(new Exception("SQL: " + e.toString()));
+			EventRecorder.recordEvent(e);
+		}
+
+		return currTable;
 	}
 
 	/** CARD STATUS **/
@@ -460,6 +486,7 @@ public class DBHandler {
 		public static final String SELECT_EXIST_CARD_WITH_PAN = "SELECT pan FROM pc_cards_%s_%s WITH (NOLOCK) WHERE pan = ? and expiry_date = ?";
 		public static final String UPDATE_CARD_OFFSET = "UPDATE pc_cards_%s_%s SET pvv_or_pin_offset = ? WHERE pan = ? and expiry_date = ?";
 		public static final String SELECT_EXIST_CARD_WITH_COMPANY_NAME = "SELECT company_name FROM pc_customers_%s_%s WITH (NOLOCK) WHERE customer_id = ?";
+		public static final String SELECT_CURR_TABLE_CARDS = "SELECT curr_table_cards FROM pc_issuers WITH (NOLOCK) WHERE issuer_nr = ?";
 	}
 
 }

@@ -240,7 +240,6 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 		if (msg.isFieldSet(Iso8583.Bit._041_CARD_ACCEPTOR_TERM_ID)
 				&& ((msg.getField(Iso8583.Bit._041_CARD_ACCEPTOR_TERM_ID).substring(0, 4).equals("T100"))
 						|| msg.getField(Iso8583.Bit._041_CARD_ACCEPTOR_TERM_ID).substring(0, 4).equals("T300"))) {
-			Logger.logLine("if", true);
 			msg.putMsgType(Iso8583Post.MsgType.getResponse(msg.getMsgType()));
 			msg.putField(Iso8583Post.Bit._038_AUTH_ID_RSP, "000000");
 			msg.putField(Iso8583Post.Bit._039_RSP_CODE, Iso8583.RspCode._00_SUCCESSFUL);

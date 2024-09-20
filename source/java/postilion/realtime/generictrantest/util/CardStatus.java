@@ -15,8 +15,6 @@ public class CardStatus extends Iso8583 {
 
 	public Iso8583 resultCardStatus(Iso8583 p_msg, Iso8583Post msgToTM, boolean enableLog, String process) {
 
-		Logger.logLine("resultCardStatus1: ", enableLog);
-
 		StructuredData field_structured = new StructuredData();
 
 		try {
@@ -30,12 +28,10 @@ public class CardStatus extends Iso8583 {
 
 			resultCardStatus = processCardStatus(p_msg, msgToTM, field_structured, enableLog);
 
-			Logger.logLine("resultCardStatus2: " + resultCardStatus, enableLog);
-
 			if (resultCardStatus) {
 				p_msg.putField(Iso8583.Bit._039_RSP_CODE, SystemConstants.TWO_ZEROS);
 			} else {
-				p_msg.putField(Iso8583.Bit._039_RSP_CODE, "96");
+				p_msg.putField(Iso8583.Bit._039_RSP_CODE, "36"); /** Restricted card, pick-up estado con bloqueo **/
 			}
 
 		} catch (XFieldUnableToConstruct e) {
@@ -54,14 +50,9 @@ public class CardStatus extends Iso8583 {
 	public boolean processCardStatus(Iso8583 p_msgIso, Iso8583Post msgToTM, StructuredData field_structured,
 			boolean enableLog) {
 
-		Logger.logLine("processCardStatus1: ", enableLog);
-
 		boolean result = false;
 
 		try {
-
-			Logger.logLine("processCardStatus2: ", enableLog);
-
 			String channel = null;
 			switch (p_msgIso.getField(Iso8583.Bit._041_CARD_ACCEPTOR_TERM_ID).substring(15, 16)) {
 			case "1":
@@ -86,29 +77,17 @@ public class CardStatus extends Iso8583 {
 				break;
 			}
 
-			Logger.logLine("channel: " + channel, enableLog);
-
 			String pan = p_msgIso.getTrack2Data().getPan();
-
-			Logger.logLine("pan: " + pan, enableLog);
-
 			String expiryDate = p_msgIso.getTrack2Data().getExpiryDate();
-
-			Logger.logLine("expiryDate: " + expiryDate, enableLog);
-
 			String issuer = field_structured.get("ISSUER") != null ? field_structured.get("ISSUER") : "1";
-
-			Logger.logLine("ISSUER: " + issuer, enableLog);
-
 			String customerId = field_structured.get("CUSTOMER_ID") != null ? field_structured.get("CUSTOMER_ID")
 					: "0000000000000000000000000";
-
-			Logger.logLine("CUSTOMER_ID: " + customerId, enableLog);
 
 			result = DBHandler.Card(issuer, pan, expiryDate, enableLog);
 			if (result) {
 				result = DBHandler.Company(issuer, customerId, enableLog);
 				if (result) {
+					field_structured.put("NOV_CAPA", "S");
 					constructMsgToTm(p_msgIso, msgToTM, field_structured);
 				}
 			}
@@ -226,6 +205,7 @@ public class CardStatus extends Iso8583 {
 			msgToTM.putPrivField(Iso8583Post.PrivBit._002_SWITCH_KEY, key);
 
 			msgToTM.putStructuredData(field_structured);
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
