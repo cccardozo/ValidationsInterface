@@ -202,7 +202,7 @@ public class DBHandler {
 		} catch (Exception e) {
 			EventRecorder.recordEvent(new Exception("SQL Ex: " + e.toString()));
 			EventRecorder.recordEvent(e);
-		}
+		} 
 		return result;
 	}
 
