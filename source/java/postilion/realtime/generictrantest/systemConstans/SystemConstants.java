@@ -25,7 +25,7 @@ public class SystemConstants {
 	public static final String CODE_DECLINATION = "36";
 	public static final String KEY_ISSUER = "ISSUER";
 	public static final String DEFAULT_VALUE_ISSUER = "1";
-	public static final String KEY_CUSTOMER_ID = "";
+	public static final String KEY_CUSTOMER_ID = "CUSTOMER_ID";
 	public static final String DEFAULT_VALUE_CUSTOMER_ID = "0000000000000000000000000";
 	public static final String KEY_NOV_CAPA = "NOV_CAPA";
 	public static final String VALUE_NOV_CAPA = "S";
