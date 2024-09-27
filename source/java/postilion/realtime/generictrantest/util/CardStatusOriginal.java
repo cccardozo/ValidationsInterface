@@ -11,7 +11,7 @@ import postilion.realtime.sdk.message.bitmap.XFieldUnableToConstruct;
 import postilion.realtime.sdk.util.XPostilion;
 import postilion.realtime.sdk.util.convert.Transform;
 
-public class CardStatus extends Iso8583 {
+public class CardStatusOriginal extends Iso8583 {
 
 	public Iso8583 resultCardStatus(Iso8583 p_msg, Iso8583Post msgToTM, boolean enableLog, String process) {
 
@@ -49,32 +49,55 @@ public class CardStatus extends Iso8583 {
 
 	public boolean processCardStatus(Iso8583 p_msgIso, Iso8583Post msgToTM, StructuredData field_structured,
 			boolean enableLog) {
+
+		boolean result = false;
+
 		try {
+			String channel = null;
+			switch (p_msgIso.getField(Iso8583.Bit._041_CARD_ACCEPTOR_TERM_ID).substring(15, 16)) {
+			case "1":
+				channel = "BM";
+				break;
+			case "2":
+				channel = "PB";
+				break;
+			case "3":
+				channel = "IV";
+				break;
+			case "4":
+				channel = "CP";
+				break;
+			case "5":
+				channel = "SM";
+				break;
+			case "6":
+				channel = "DG";
+				break;
+			default:
+				break;
+			}
+
 			String pan = p_msgIso.getTrack2Data().getPan();
 			String expiryDate = p_msgIso.getTrack2Data().getExpiryDate();
-			String issuer = getFieldValue(field_structured, "ISSUER", "1");
-			String customerId = getFieldValue(field_structured, "CUSTOMER_ID", "0000000000000000000000000");
+			String issuer = field_structured.get("ISSUER") != null ? field_structured.get("ISSUER") : "1";
+			String customerId = field_structured.get("CUSTOMER_ID") != null ? field_structured.get("CUSTOMER_ID")
+					: "0000000000000000000000000";
 
-			if (DBHandler.Card(issuer, pan, expiryDate, enableLog)) {
-				if (DBHandler.Company(issuer, customerId, enableLog)) {
+			result = DBHandler.Card(issuer, pan, expiryDate, enableLog);
+			if (result) {
+				result = DBHandler.Company(issuer, customerId, enableLog);
+				if (result) {
 					field_structured.put("NOV_CAPA", "S");
 					constructMsgToTm(p_msgIso, msgToTM, field_structured);
-					return true;
 				}
 			}
 
-		} catch (XFieldUnableToConstruct e) {
-			// TODO Auto-generated catch block
-			EventRecorder.recordEvent(e);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			EventRecorder.recordEvent(e);
+			field_structured.put("ERROR", "ERROR");
+			Logger.logLine("ERROR: " + e.toString(), enableLog);
+			EventRecorder.recordEvent(new Exception(e.toString()));
 		}
-		return false;
-	}
-
-	private String getFieldValue(StructuredData fieldStructured, String key, String defaultValue) {
-		return fieldStructured.get(key) != null ? fieldStructured.get(key) : defaultValue;
+		return result;
 	}
 
 	public void constructMsgToTm(Iso8583 p_msgIso, Iso8583Post msgToTM, StructuredData field_structured) {

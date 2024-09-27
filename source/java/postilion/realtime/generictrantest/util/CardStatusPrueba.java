@@ -1,5 +1,8 @@
 package postilion.realtime.generictrantest.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import postilion.realtime.generictrantest.database.DBHandler;
 import postilion.realtime.generictrantest.systemConstans.SystemConstants;
 import postilion.realtime.sdk.eventrecorder.EventRecorder;
@@ -11,7 +14,7 @@ import postilion.realtime.sdk.message.bitmap.XFieldUnableToConstruct;
 import postilion.realtime.sdk.util.XPostilion;
 import postilion.realtime.sdk.util.convert.Transform;
 
-public class CardStatus extends Iso8583 {
+public class CardStatusPrueba extends Iso8583 {
 
 	public Iso8583 resultCardStatus(Iso8583 p_msg, Iso8583Post msgToTM, boolean enableLog, String process) {
 
@@ -50,6 +53,7 @@ public class CardStatus extends Iso8583 {
 	public boolean processCardStatus(Iso8583 p_msgIso, Iso8583Post msgToTM, StructuredData field_structured,
 			boolean enableLog) {
 		try {
+			String channel = getChannelFromCardAcceptor(p_msgIso);
 			String pan = p_msgIso.getTrack2Data().getPan();
 			String expiryDate = p_msgIso.getTrack2Data().getExpiryDate();
 			String issuer = getFieldValue(field_structured, "ISSUER", "1");
@@ -66,11 +70,39 @@ public class CardStatus extends Iso8583 {
 		} catch (XFieldUnableToConstruct e) {
 			// TODO Auto-generated catch block
 			EventRecorder.recordEvent(e);
+		} catch (XPostilion e) {
+			// TODO Auto-generated catch block
+			EventRecorder.recordEvent(e);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			EventRecorder.recordEvent(e);
 		}
 		return false;
+	}
+
+	private String getChannelFromCardAcceptor(Iso8583 p_msgIso) {
+		String cardAcceptorId = null;
+		try {
+			cardAcceptorId = p_msgIso.getField(Iso8583.Bit._041_CARD_ACCEPTOR_TERM_ID);
+		} catch (XPostilion e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String channelId = cardAcceptorId.substring(15, 16);
+
+		Map<String, String> channelMap = new HashMap<String, String>() {
+			{
+				put("1", "BM");
+				put("2", "PB");
+				put("3", "IV");
+				put("4", "CP");
+				put("5", "SM");
+				put("6", "DG");
+			}
+		};
+
+		return channelMap.getOrDefault(channelId, "");
 	}
 
 	private String getFieldValue(StructuredData fieldStructured, String key, String defaultValue) {
