@@ -29,10 +29,12 @@ public class CardStatus extends Iso8583 {
 			resultCardStatus = processCardStatus(p_msg, msgToTM, field_structured, enableLog);
 
 			if (resultCardStatus) {
-				p_msg.putField(Iso8583.Bit._039_RSP_CODE, SystemConstants.TWO_ZEROS);
+				p_msg.putField(Iso8583.Bit._039_RSP_CODE, Iso8583.RspCode._00_SUCCESSFUL);
 			} else {
 				p_msg.putField(Iso8583.Bit._039_RSP_CODE,
-						SystemConstants.CODE_DECLINATION); /** Restricted card, pick-up estado con bloqueo **/
+						Iso8583.RspCode._36_RESTRICTED_CARD_PICK_UP); /**
+																		 * Restricted card, pick-up estado con bloqueo
+																		 **/
 			}
 
 		} catch (XFieldUnableToConstruct e) {
@@ -57,13 +59,16 @@ public class CardStatus extends Iso8583 {
 					SystemConstants.DEFAULT_VALUE_ISSUER);
 			String customerId = getFieldValue(field_structured, SystemConstants.KEY_CUSTOMER_ID,
 					SystemConstants.DEFAULT_VALUE_CUSTOMER_ID);
+			String customerIdType = getFieldValue(field_structured, SystemConstants.KEY_CUSTOMER_ID_TYPE,
+					SystemConstants.DEFAULT_CUSTOMER_ID_TYPE);
 
-			if (DBHandler.Card(issuer, pan, expiryDate, enableLog)) {
-				if (DBHandler.Company(issuer, customerId, enableLog)) {
-					field_structured.put(SystemConstants.KEY_NOV_CAPA, SystemConstants.VALUE_NOV_CAPA);
-					constructMsgToTm(p_msgIso, msgToTM, field_structured);
-					return true;
-				}
+			if (DBHandler.Card(issuer, pan, expiryDate, enableLog)
+					&& DBHandler.Company(issuer, customerId, enableLog)) {
+				field_structured.put(SystemConstants.KEY_NOV_CAPA, SystemConstants.VALUE_NOV_CAPA);
+				field_structured.put(SystemConstants.KEY_CUSTOMER_ID, customerId);
+				field_structured.put(SystemConstants.KEY_CUSTOMER_ID_TYPE, customerIdType);
+				constructMsgToTm(p_msgIso, msgToTM, field_structured);
+				return true;
 			}
 
 		} catch (XFieldUnableToConstruct e) {

@@ -27,6 +27,8 @@ public class SystemConstants {
 	public static final String DEFAULT_VALUE_ISSUER = "1";
 	public static final String KEY_CUSTOMER_ID = "CUSTOMER_ID";
 	public static final String DEFAULT_VALUE_CUSTOMER_ID = "0000000000000000000000000";
+	public static final String KEY_CUSTOMER_ID_TYPE = "CUSTOMER_ID_TYPE";
+	public static final String DEFAULT_CUSTOMER_ID_TYPE = "0";
 	public static final String KEY_NOV_CAPA = "NOV_CAPA";
 	public static final String VALUE_NOV_CAPA = "S";
 	public static final String POS_ENTRY_MODE = "021";
