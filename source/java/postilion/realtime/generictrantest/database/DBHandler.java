@@ -482,6 +482,7 @@ public class DBHandler {
 		public static final String ACTIVE = "active";
 	}
 
+	/** Define los Queries utilizados en la clase **/
 	public static class Queries {
 		public static final String SELECT_EXIST_CARD_WITH_PAN = "SELECT pan FROM pc_cards_%s_%s WITH (NOLOCK) WHERE pan = ? and expiry_date = ?";
 		public static final String UPDATE_CARD_OFFSET = "UPDATE pc_cards_%s_%s SET pvv_or_pin_offset = ? WHERE pan = ? and expiry_date = ?";
