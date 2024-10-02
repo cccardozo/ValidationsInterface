@@ -39,44 +39,44 @@ public class EnlistMessageB24Iso {
 		return msgToTm;
 	}
 
-	public Iso8583 validatePin(Iso8583 messageIso, boolean enableLog, String process) {
+	public Iso8583 validatePin(Iso8583 messageIso, boolean enableLog, Iso8583Post msgToTM, String process) {
 		Iso8583 msgToRemote = new Iso8583();
 		Base24toIsoMessageConverter msgValue = new Base24toIsoMessageConverter();
 		if (messageIso instanceof Base24Atm) {
 			msgToRemote = new Base24Atm(null);
 			Base24Atm msgFromRemote = (Base24Atm) messageIso;
 
-			msgToRemote = msgValue.processMsgB24ValidatePin(msgFromRemote, enableLog, process);
+			msgToRemote = msgValue.processMsgB24ValidatePin(msgFromRemote, enableLog, msgToTM, process);
 		} else if (messageIso instanceof Iso8583) {
-			msgToRemote = msgValue.processMsgB24ValidatePin(messageIso, enableLog, process);
+			msgToRemote = msgValue.processMsgB24ValidatePin(messageIso, enableLog, msgToTM, process);
 		}
 		return msgToRemote;
 	}
 
-	public Iso8583 validatePinCvv(Iso8583 messageIso, boolean enableLog, String process) {
+	public Iso8583 validatePinCvv(Iso8583 messageIso, boolean enableLog, Iso8583Post msgToTM, String process) {
 		Iso8583 msgToRemote = new Iso8583();
 		Base24toIsoMessageConverter msgValue = new Base24toIsoMessageConverter();
 		if (messageIso instanceof Base24Atm) {
 			msgToRemote = new Base24Atm(null);
 			Base24Atm msgFromRemote = (Base24Atm) messageIso;
 
-			msgToRemote = msgValue.processMsgB24ValidatePinCvv(msgFromRemote, enableLog, process);
+			msgToRemote = msgValue.processMsgB24ValidatePinCvv(msgFromRemote, enableLog, msgToTM, process);
 		} else if (messageIso instanceof Iso8583) {
-			msgToRemote = msgValue.processMsgB24ValidatePinCvv(messageIso, enableLog, process);
+			msgToRemote = msgValue.processMsgB24ValidatePinCvv(messageIso, enableLog, msgToTM, process);
 		}
 		return msgToRemote;
 	}
 
-	public Iso8583 validateCvv(Iso8583 messageIso, boolean enableLog, String process) {
+	public Iso8583 validateCvv(Iso8583 messageIso, boolean enableLog, Iso8583Post msgToTM, String process) {
 		Iso8583 msgToRemote = new Iso8583();
 		Base24toIsoMessageConverter msgValue = new Base24toIsoMessageConverter();
 		if (messageIso instanceof Base24Atm) {
 			msgToRemote = new Base24Atm(null);
 			Base24Atm msgFromRemote = (Base24Atm) messageIso;
 
-			msgToRemote = msgValue.processMsgB24ValidateCvv(msgFromRemote, enableLog, process);
+			msgToRemote = msgValue.processMsgB24ValidateCvv(msgFromRemote, enableLog, msgToTM, process);
 		} else if (messageIso instanceof Iso8583) {
-			msgToRemote = msgValue.processMsgB24ValidateCvv(messageIso, enableLog, process);
+			msgToRemote = msgValue.processMsgB24ValidateCvv(messageIso, enableLog, msgToTM, process);
 		}
 		return msgToRemote;
 	}
@@ -113,5 +113,33 @@ public class EnlistMessageB24Iso {
 		IsoToBase24MessageConverter msgToBase24 = new IsoToBase24MessageConverter();
 		Base24Atm msgToRemote = new Base24Atm(null);
 		return msgToBase24.converToB24(msgToRemote, msg);
+	}
+	
+	public Iso8583 encryptData(Iso8583 messageIso, boolean enableLog, Iso8583Post msgToTM, String process) {
+		Iso8583 msgToRemote = new Iso8583();
+		Base24toIsoMessageConverter msgValue = new Base24toIsoMessageConverter();
+		if (messageIso instanceof Base24Atm) {
+			msgToRemote = new Base24Atm(null);
+			Base24Atm msgFromRemote = (Base24Atm) messageIso;
+
+			msgToRemote = msgValue.processMsgB24EncryptData(msgFromRemote, enableLog, msgToTM, process);
+		} else if (messageIso instanceof Iso8583) {
+			msgToRemote = msgValue.processMsgB24EncryptData(messageIso, enableLog, msgToTM, process);
+		}
+		return msgToRemote;
+	}
+	
+	public Iso8583 decryptData(Iso8583 messageIso, boolean enableLog, Iso8583Post msgToTM, String process) {
+		Iso8583 msgToRemote = new Iso8583();
+		Base24toIsoMessageConverter msgValue = new Base24toIsoMessageConverter();
+		if (messageIso instanceof Base24Atm) {
+			msgToRemote = new Base24Atm(null);
+			Base24Atm msgFromRemote = (Base24Atm) messageIso;
+
+			msgToRemote = msgValue.processMsgB24DecryptData(msgFromRemote, enableLog, msgToTM, process);
+		} else if (messageIso instanceof Iso8583) {
+			msgToRemote = msgValue.processMsgB24DecryptData(messageIso, enableLog, msgToTM, process);
+		}
+		return msgToRemote;
 	}
 }

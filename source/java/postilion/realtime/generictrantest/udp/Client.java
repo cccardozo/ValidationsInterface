@@ -220,9 +220,48 @@ public class Client {
 		return (Base64.getEncoder().encodeToString(msg.getBytes())).getBytes();
 	}
 	
+	/**
+	 * Formatea mensaje para envio a log udp
+	 * 
+	 * @param value valor a enviar en el log
+	 * @param p37 a enviar
+	 * @throws XPostilion
+	 */
+	public static byte[] formatDatatoSendPinValidation(String value, String p37) {
+		return ("RN_POSTILIONVALIDATION_DATA=VALIDATPIN"+" | "+p37+" | "+value).getBytes();
+	}
 	
-	public static byte[] formatDatatoSend(String value) {
-		return ("RN_VALIDACIONPIN_DATA="+value).getBytes();
+	/**
+	 * Formatea mensaje para envio a log udp
+	 * 
+	 * @param value valor a enviar en el log
+	 * @param p37 a enviar
+	 * @throws XPostilion
+	 */
+	public static byte[] formatDatatoSendEncryptionData(String value, String p37) {
+		return ("RN_POSTILIONVALIDATION_DATA=ENCRYPTDAT"+" | "+p37+" | "+value).getBytes();
+	}
+	
+	/**
+	 * Formatea mensaje para envio a log udp
+	 * 
+	 * @param value valor a enviar en el log
+	 * @param p37 a enviar
+	 * @throws XPostilion
+	 */
+	public static byte[] formatDatatoSendDecryptionData(String value, String p37) {
+		return ("RN_POSTILIONVALIDATION_DATA=DECRYPTDAT"+" | "+p37+" | "+value).getBytes();
+	}
+	
+	/**
+	 * Formatea mensaje para envio a log udp
+	 * 
+	 * @param value valor a enviar en el log
+	 * @param p37 a enviar
+	 * @throws XPostilion
+	 */
+	public static byte[] formatDatatoSendChangePin(String value, String p37) {
+		return ("RN_POSTILIONVALIDATION_DATA=CHANGE_PIN"+" | "+p37+" | "+value).getBytes();
 	}
 	
 	/**
@@ -242,7 +281,7 @@ public class Client {
 
 			try {
 				DatagramSocket socket = new DatagramSocket();
-				socket.setSoTimeout(100);
+				socket.setSoTimeout(1000);
 //				DatagramPacket request = new DatagramPacket(data, data.length, ipAddress, port);
 				Logger.logLine("data: " + data, log);
 				Logger.logLine("data.length: " + data.length, log);

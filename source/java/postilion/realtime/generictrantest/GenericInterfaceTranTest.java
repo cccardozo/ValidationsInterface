@@ -27,7 +27,7 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 	private String transactionIdentification;
 	private String routeKeysHSM;
 	private String process;
-	public static String modeConnection;
+	public static String modeConnection = "tcp";
 	public static Map<String, Object> infoTrasactionIdentidicator = new ConcurrentHashMap<String, Object>(); 
 	public static Map<String, String> keysHSM = new ConcurrentHashMap<String, String>(); 
 
@@ -81,7 +81,7 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 		fillKeys();
 
 		udpClient = new Client(ipUdpServer, portUdpServer, portUdpClient);
-		udpClientAtalla = new Client(ipUdpServerAtalla, portUdpServerAtalla, portUdpClientAtalla);
+		//udpClientAtalla = new Client(ipUdpServerAtalla, portUdpServerAtalla, portUdpClientAtalla);
 		
 		keysHSM.forEach((k,v) -> {
 
@@ -171,13 +171,16 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 
 		switch (msg.getField(Iso8583.Bit._041_CARD_ACCEPTOR_TERM_ID).substring(14, 15)) {
 		case "1":
-			actionToTake.putMsgToRemote(enlistMessageB24Iso.validatePin(msg, enableLog, process));
+			actionToTake.putMsgToRemote(enlistMessageB24Iso.validatePin(msg, enableLog, msgToTM, process));
+			actionToTake.putMsgToTranmgr(msgToTM);
 			break;
 		case "2":
-			actionToTake.putMsgToRemote(enlistMessageB24Iso.validatePinCvv(msg, enableLog, process));
+			actionToTake.putMsgToRemote(enlistMessageB24Iso.validatePinCvv(msg, enableLog, msgToTM, process));
+			actionToTake.putMsgToTranmgr(msgToTM);
 			break;
 		case "3":
-			actionToTake.putMsgToRemote(enlistMessageB24Iso.validateCvv(msg, enableLog, process));
+			actionToTake.putMsgToRemote(enlistMessageB24Iso.validateCvv(msg, enableLog, msgToTM, process));
+			actionToTake.putMsgToTranmgr(msgToTM);
 			break;
 		case "4":
 			msgB24Rsp = enlistMessageB24Iso.changePin(msg, msgToTM, enableLog, process);
@@ -186,10 +189,8 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 			Logger.logLine("msgToTM: Salida: " + msgToTM, enableLog);
 
 			actionToTake.putMsgToRemote(msgB24Rsp);
-			if (msgB24Rsp.isFieldSet(Iso8583.Bit._039_RSP_CODE)
-					&& msgB24Rsp.getField(Iso8583.Bit._039_RSP_CODE).equals("00")) {
-				actionToTake.putMsgToTranmgr(msgToTM);
-			}
+			actionToTake.putMsgToTranmgr(msgToTM);
+			
 
 			break;
 		case "5":
@@ -204,6 +205,14 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 				actionToTake.putMsgToTranmgr(msgToTM);
 			}
 
+			break;
+		case "6":
+			actionToTake.putMsgToRemote(enlistMessageB24Iso.encryptData(msg, enableLog, msgToTM, process));
+			actionToTake.putMsgToTranmgr(msgToTM);
+			break;
+		case "7":
+			actionToTake.putMsgToRemote(enlistMessageB24Iso.decryptData(msg, enableLog, msgToTM, process));
+			actionToTake.putMsgToTranmgr(msgToTM);
 			break;
 		default:
 
@@ -293,28 +302,6 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 		Iso8583 msgB24Rsp = new Iso8583();
 
 		switch (msg.getField(Iso8583.Bit._041_CARD_ACCEPTOR_TERM_ID).substring(14, 15)) {
-		case "1":
-			actionToTake.putMsgToRemote(enlistMessageB24Iso.validatePin(msg, enableLog, process));
-			break;
-		case "2":
-			actionToTake.putMsgToRemote(enlistMessageB24Iso.validatePinCvv(msg, enableLog, process));
-			break;
-		case "3":
-			actionToTake.putMsgToRemote(enlistMessageB24Iso.validateCvv(msg, enableLog, process));
-			break;
-		case "4":
-			msgB24Rsp = enlistMessageB24Iso.changePin(msg, msgToTM, enableLog, process);
-
-			Logger.logLine("msgB24Rsp: Salida: " + msgB24Rsp, enableLog);
-			Logger.logLine("msgToTM: Salida: " + msgToTM, enableLog);
-
-			actionToTake.putMsgToRemote(msgB24Rsp);
-			if (msgB24Rsp.isFieldSet(Iso8583.Bit._039_RSP_CODE)
-					&& msgB24Rsp.getField(Iso8583.Bit._039_RSP_CODE).equals("00")) {
-				actionToTake.putMsgToTranmgr(msgToTM);
-			}
-
-			break;
 		case "5":
 			msgB24Rsp = enlistMessageB24Iso.resultCardStatus(msg, msgToTM, enableLog, process);
 

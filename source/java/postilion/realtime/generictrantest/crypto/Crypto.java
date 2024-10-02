@@ -21,7 +21,6 @@ import postilion.realtime.sdk.message.bitmap.ServiceRestrictionCode;
 import postilion.realtime.sdk.message.bitmap.Track2;
 import postilion.realtime.sdk.message.bitmap.XFieldUnableToConstruct;
 import postilion.realtime.sdk.util.XPostilion;
-import postilion.realtime.sdk.util.convert.Pack;
 import postilion.realtime.sdk.util.convert.Transform;
 
 public class Crypto {
@@ -98,16 +97,16 @@ public class Crypto {
 	 *         Length error encountered when PIN-length error checking enabled.
 	 * 
 	 */
-	public boolean validatePin(String pinBlock, String kwp, String pinOffset, String pan, String kvp, boolean log) {
+	public boolean validatePin(String pinBlock, String kwp, String pinOffset, String pan, String kvp, String p37, boolean log) {
 		boolean result = false;
 		
 		try {
 			String command32 = "<32#2#3#" + pinBlock + "#" + kwp + "#0123456789012345#" + pinOffset + "#" + pan.substring(4) + "#F#4#" + kvp + "#F#" + pan.substring(3, 15) + "#>";
-			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command31:" + command32));
-			Logger.logLine("command31:" + command32, log);
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("command32:" + command32, p37));
+			Logger.logLine("command32:" + command32, log);
 			String resCommand32[] = this.hsmComm.sendCommand(command32, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
-			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("resCommand31:" + Arrays.toString(resCommand32)));
-			Logger.logLine("resCommand31:" + Arrays.toString(resCommand32), log);
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("resCommand32:" + Arrays.toString(resCommand32), p37));
+			Logger.logLine("resCommand32:" + Arrays.toString(resCommand32), log);
 			if(resCommand32[1].equals("Y"))
 				result = true;
 		} catch (Exception e) {
@@ -136,14 +135,14 @@ public class Crypto {
 	 *         Length error encountered when PIN-length error checking enabled.
 	 * 
 	 */
-	public String convertPin(String pinBlock, String kwpChannel, String idDoc, boolean log) {
+	public String convertPin(String pinBlock, String kwpChannel, String idDoc, String p37, boolean log) {
 		String result = "FFFFFFFFFFFFFFFF";
 		try {
 			String command33 = "<33#13#" + kwpChannel + "#" + kwpChannel + "#" + pinBlock + "#F#" + idDoc + "#>";
-			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command33:" + command33));
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("command33:" + command33, p37));
 			Logger.logLine("command33:" + command33, log);
 			String resCommand33[] = this.hsmComm.sendCommand(command33, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
-			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("resCommand33:" + Arrays.toString(resCommand33)));
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("resCommand33:" + Arrays.toString(resCommand33), p37));
 			Logger.logLine("resCommand33:" + Arrays.toString(resCommand33), log);
 			if(resCommand33[2].equals("Y"))
 				result = resCommand33[1];
@@ -177,7 +176,7 @@ public class Crypto {
 	 * @param pinBlockData   informaci�n de PIN Block
 	 * @return pinblock traducido a la llave de salida
 	 */
-	public String changePIN(String oldPinblock, String kwpChannel, String pinOffset, String pan, String validationKey, String newPinblock, boolean log) {
+	public String changePIN(String oldPinblock, String kwpChannel, String pinOffset, String pan, String validationKey, String newPinblock, String p37, boolean log) {
 		
 		String result = "FFFF";
 		
@@ -185,8 +184,10 @@ public class Crypto {
 			String command37 = "<37#2#3#" + oldPinblock + "#" + kwpChannel + "#0123456789012345#" + pinOffset + "#" + 
 								pan.substring(4) + "#F#4#" + validationKey + "#" + newPinblock + "#F#" + pan.substring(3, 15) + "#>";
 			Logger.logLine("command37:" + command37, log);
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendChangePin("command37:" + command37, p37));
 			String resCommand37[] = this.hsmComm.sendCommand(command37, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
 			Logger.logLine("resCommand37:" + Arrays.toString(resCommand37), log);
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendChangePin("resCommand37:" + Arrays.toString(resCommand37), p37));
 			if(resCommand37[1].equals("Y"))
 				result = resCommand37[2];
 			
@@ -228,6 +229,133 @@ public class Crypto {
 			EventRecorder.recordEvent(new Exception(e.toString()));
 		}
 		return validCvv;
+	}
+	
+	
+	/**
+	 * Construye y envia a ejecuci�n el comando 97 de la caja Atalla para encripci�n
+	 * de informaci�n
+	 * 
+	 * @param data          informaci�n a encriptar
+	 * @param keyCryptogram llave KD para hacer la encripci�n
+	 * @return informaci�n encriptada con el m�todo 3DES CBC
+	 */
+	public String encryptPanData(String data, String key, String p37, boolean log) {
+		
+		String dataEncrypted = "";
+		
+		try {
+			String command97 = "<97#E#1#" + key + "#D#U#" + data.length() + "#" + data + "#>";
+			Logger.logLine("command97:" + command97, log);
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendEncryptionData("command97:" + command97, p37));
+			String resCommand97[] = this.hsmComm.sendCommand(command97, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendEncryptionData("resCommand97:" + Arrays.toString(resCommand97), p37));
+			Logger.logLine("resCommand97:" + Arrays.toString(resCommand97), log);
+			if(resCommand97 != null && resCommand97[8] != null)
+				dataEncrypted = resCommand97[8];
+			
+		}catch (Exception e) {
+			Logger.logLine("Convert error: " + e.toString(), log);
+			EventRecorder.recordEvent(new Exception(e.toString()));
+			dataEncrypted = "ERROR";
+		} finally {
+			this.hsmComm.closeConnectHSM();
+		}
+		return dataEncrypted;
+	}
+
+	/**
+	 * Construye y envia a ejecuci�n el comando 97 de la caja Atalla para
+	 * desencripci�n de informaci�n
+	 * 
+	 * @param encryptedData informaci�n a desencriptar
+	 * @param keyCryptogram llave KD para hacer la encripci�n
+	 * @return informaci�n desencriptada con el m�todo 3DES CBC
+	 */
+	public String decryptPanData(String encryptedData, String key, String p37, boolean log) {
+		String dataDecrypted = "";
+		
+		try {
+			String command97 = "<97#D#1#" + key + "#D#U#" + encryptedData.length() + "#" + encryptedData + "#>";
+			Logger.logLine("command97:" + command97, log);
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendDecryptionData("command97:" + command97, p37));
+			String resCommand97[] = this.hsmComm.sendCommand(command97, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendDecryptionData("resCommand97:" + Arrays.toString(resCommand97), p37));
+			Logger.logLine("resCommand97:" + Arrays.toString(resCommand97), log);
+			if(resCommand97 != null && resCommand97[8] != null)
+				dataDecrypted = resCommand97[8];
+			
+		}catch (Exception e) {
+			Logger.logLine("Convert error: " + e.toString(), log);
+			EventRecorder.recordEvent(new Exception(e.toString()));
+			dataDecrypted = "ERROR";
+		} finally {
+			this.hsmComm.closeConnectHSM();
+		}
+		return dataDecrypted;
+	}
+	
+	/**
+	 * Construye y envia a ejecuci�n el comando 97 de la caja Atalla para encripci�n
+	 * de informaci�n
+	 * 
+	 * @param data          informaci�n a encriptar
+	 * @param keyCryptogram llave KD para hacer la encripci�n
+	 * @return informaci�n encriptada con el m�todo 3DES CBC
+	 */
+	public String encryptExpDateData(String data, String key, String p37, boolean log) {
+		
+		String dataEncrypted = "";
+		
+		try {
+			String command97 = "<97#E#1#" + key + "#D#U#" + data.length() + "#" + data + "#>";
+			Logger.logLine("command97:" + command97, log);
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendEncryptionData("command97:" + command97, p37));
+			String resCommand97[] = this.hsmComm.sendCommand(command97, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
+			Logger.logLine("resCommand97:" + Arrays.toString(resCommand97), log);
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendEncryptionData("resCommand97:" + Arrays.toString(resCommand97), p37));
+			if(resCommand97 != null && resCommand97[8] != null)
+				dataEncrypted = resCommand97[8];
+			
+		}catch (Exception e) {
+			Logger.logLine("Convert error: " + e.toString(), log);
+			EventRecorder.recordEvent(new Exception(e.toString()));
+			dataEncrypted = "ERROR";
+		} finally {
+			this.hsmComm.closeConnectHSM();
+		}
+		return dataEncrypted;
+	}
+
+	/**
+	 * Construye y envia a ejecuci�n el comando 97 de la caja Atalla para
+	 * desencripci�n de informaci�n
+	 * 
+	 * @param encryptedData informaci�n a desencriptar
+	 * @param keyCryptogram llave KD para hacer la encripci�n
+	 * @return informaci�n desencriptada con el m�todo 3DES CBC
+	 */
+	public String decryptExpDateData(String encryptedData, String key, String p37, boolean log) {
+		String dataDecrypted = "";
+		
+		try {
+			String command97 = "<97#D#1#" + key + "#D#U#" + encryptedData.length() + "#" + encryptedData + "#>";
+			Logger.logLine("command97:" + command97, log);
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendDecryptionData("command97:" + command97, p37));
+			String resCommand97[] = this.hsmComm.sendCommand(command97, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
+			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendDecryptionData("resCommand97:" + Arrays.toString(resCommand97), p37));
+			Logger.logLine("resCommand97:" + Arrays.toString(resCommand97), log);
+			if(resCommand97 != null && resCommand97[8] != null)
+				dataDecrypted = resCommand97[8];
+			
+		}catch (Exception e) {
+			Logger.logLine("Convert error: " + e.toString(), log);
+			EventRecorder.recordEvent(new Exception(e.toString()));
+			dataDecrypted = "ERROR";
+		} finally {
+			this.hsmComm.closeConnectHSM();
+		}
+		return dataDecrypted;
 	}
 	
 	/**

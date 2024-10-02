@@ -42,7 +42,7 @@ public class HSMDirectorBuild {
 		try {
 			
 			if(GenericInterfaceTranTest.modeConnection.toLowerCase().equals("udp")) {
-				data = GenericInterfaceTranTest.udpClientAtalla.sendMsgToAtalla(commandHSM, true);
+				data = GenericInterfaceTranTest.udpClientAtalla.sendMsgToAtalla(commandHSM, false);
 			} else {
 				data = processMessage(commandHSM);
 				if (data == null || errorHsm.equals(data)) {
