@@ -115,10 +115,10 @@ public class GenericInterfaceTranTest extends AInterchangeDriver8583 {
 				ipUdpServer = parameters.get("IP_UDP_SERVER").toString();
 				portUdpServer = parameters.get("PORT_UDP_SERVER").toString();
 				portUdpClient = parameters.get("PORT_UDP_CLIENT").toString();
-				modeConnection = parameters.get("MODE_CONNECTION").toString();
-				ipUdpServerAtalla = parameters.get("IP_UDP_SERVER_ATALLA").toString();
-				portUdpServerAtalla = parameters.get("PORT_UDP_SERVER_ATALLA").toString();
-				portUdpClientAtalla = parameters.get("PORT_UDP_CLIENT_ATALLA").toString();
+//				modeConnection = parameters.get("MODE_CONNECTION").toString();
+//				ipUdpServerAtalla = parameters.get("IP_UDP_SERVER_ATALLA").toString();
+//				portUdpServerAtalla = parameters.get("PORT_UDP_SERVER_ATALLA").toString();
+//				portUdpClientAtalla = parameters.get("PORT_UDP_CLIENT_ATALLA").toString();
 			}
 
 			Logger.logLine("typeMessage:" + typeMessage, enableLog);
