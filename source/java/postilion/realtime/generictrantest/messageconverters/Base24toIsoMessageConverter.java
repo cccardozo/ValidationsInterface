@@ -193,7 +193,7 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 			try {			
 				Logger.logLine("p_msgIso: "+p_msgIso, enableLog);
 				p_convertMsgIso.putMsgType(p_msgIso.getMsgType());
-				ProcessingCode ps =  new ProcessingCode(p_msgIso.getField(Iso8583.Bit._003_PROCESSING_CODE));
+				
 				p_convertMsgIso.putField(Iso8583.Bit._003_PROCESSING_CODE, p_msgIso.getField(Iso8583.Bit._003_PROCESSING_CODE));
 				p_convertMsgIso.putField(Iso8583.Bit._004_AMOUNT_TRANSACTION, p_msgIso.getField(Iso8583.Bit._004_AMOUNT_TRANSACTION));
 				p_convertMsgIso.putField(Iso8583.Bit._007_TRANSMISSION_DATE_TIME,p_msgIso.getField(Iso8583.Bit._007_TRANSMISSION_DATE_TIME));
@@ -311,7 +311,7 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				p_msg.putMsgType(Iso8583.MsgType._0210_TRAN_REQ_RSP);
 				String p37 = p_msg.isFieldSet(Iso8583.Bit._037_RETRIEVAL_REF_NR) ? p_msg.getField(Iso8583.Bit._037_RETRIEVAL_REF_NR) : "000000000000";
 				
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("===INICIO PROCES VALIDACION PIN===", p37));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("===INICIO PROCES VALIDACION PIN===", p37, SystemConstants.PROCESS_VALIDATE_PIN));
 				
 				DBHandler.getClientData(ps.toString(), p_msg.getTrack2Data().getPan(), ps.getFromAccount(), p_msg.getTrack2Data().getExpiryDate(),
 						"0000000000000000", field_structure_w);			
@@ -337,7 +337,7 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				
 				constructMsgToTm(p_msg, msgToTM, field_structure_w);
 				
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("===FIN PROCES VALIDACION PIN===", p37));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("===FIN PROCES VALIDACION PIN===", p37, SystemConstants.PROCESS_VALIDATE_PIN));
 		
 			} catch (XFieldUnableToConstruct e) {
 				// TODO Auto-generated catch block
@@ -489,10 +489,10 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				String pinOffset = field_structure_w.get("PINOFFSET");
 				String idDoc = p_msgIso.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).substring(0,2) + p_msgIso.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).substring(p_msgIso.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).length()-10);
 				
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("keyName:" + keyName, p37));
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("pinBlock:" + pinBlock, p37));
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("pan:" + pan, p37));
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("pinOffset:" + pinOffset, p37));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("keyName:" + keyName, p37, SystemConstants.PROCESS_VALIDATE_PIN));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("pinBlock:" + pinBlock, p37, SystemConstants.PROCESS_VALIDATE_PIN));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("pan:" + pan, p37, SystemConstants.PROCESS_VALIDATE_PIN));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("pinOffset:" + pinOffset, p37, SystemConstants.PROCESS_VALIDATE_PIN));
 				Logger.logLine("keyName:" + keyName, enableLog);
 				Logger.logLine("pinBlock:" + pinBlock, enableLog);
 				Logger.logLine("pan:" + pan, enableLog);
@@ -501,8 +501,8 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				CryptoCfgManager crypcfgman = CryptoManager.getStaticConfiguration();
 				DesKwp kwpChannel = crypcfgman.getKwp(keyName);
 				DesKwp kwpPinKey = crypcfgman.getKwp("HKPINKEY");
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("kwpChannel:" + kwpChannel.getName(), p37));
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("kwpPinKey:" + kwpPinKey.getName(), p37));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("kwpChannel:" + kwpChannel.getName(), p37, SystemConstants.PROCESS_VALIDATE_PIN));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("kwpPinKey:" + kwpPinKey.getName(), p37, SystemConstants.PROCESS_VALIDATE_PIN));
 				Logger.logLine("kwpChannel:" + kwpChannel.getName(), enableLog);
 				Logger.logLine("kwpPinKey:" + kwpPinKey.getName(), enableLog);
 				Logger.logLine("kwpChannel.getValueUnderKsk():" + kwpChannel.getValueUnderKsk(), enableLog);
@@ -514,7 +514,7 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				validPin = crypto.validatePin(pinBlockConverted, kwpChannel.getValueUnderKsk(), pinOffset, pan, kwpPinKey.getValueUnderKsk(), p37, enableLog);
 				field_structure_w.put("PINVALID", validPin ? "TRUE" : "FALSE");
 				
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendPinValidation("validPin:" + validPin, p37));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("validPin:" + validPin, p37, SystemConstants.PROCESS_VALIDATE_PIN));
 				Logger.logLine("validPin:" + validPin, enableLog);
 			} catch (XCrypto e) {
 				field_structure_w.put("ERROR", "ERROR CRIPTOGRAFIA");
@@ -714,12 +714,12 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 
 			try {
 				String p37 = p_msg.isFieldSet(Iso8583.Bit._037_RETRIEVAL_REF_NR) ? p_msg.getField(Iso8583.Bit._037_RETRIEVAL_REF_NR) : "000000000000";
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendEncryptionData("==INICIO PROCESO ENCRIPCION DATA==", p37));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("==INICIO PROCESO ENCRIPCION DATA==", p37, SystemConstants.PROCESS_ENCRYPT_DATA));
 				ProcessingCode ps =  new ProcessingCode(p_msg.getField(Iso8583.Bit._003_PROCESSING_CODE));	
 				CryptoCfgManager crypcfgman = CryptoManager.getStaticConfiguration();
 				DesKwp kwpEncryptKey = crypcfgman.getKwp("HKSDAKEY");
 				
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendEncryptionData("kwpChannel:" + kwpEncryptKey.getName(), p37));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("kwpChannel:" + kwpEncryptKey.getName(), p37, SystemConstants.PROCESS_ENCRYPT_DATA));
 				Logger.logLine("kwpEncryptKey:" + kwpEncryptKey.getName(), enableLog);
 				Logger.logLine("kwpEncryptKey.getValueUnderKsk():" + kwpEncryptKey.getValueUnderKsk(), enableLog);
 				Crypto crypto = new Crypto(enableLog);
@@ -744,7 +744,7 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				} else {
 					if (!docBd.equals(docIn)) {
 						p_msg.putField(Iso8583.Bit._039_RSP_CODE, "56");
-						p_msg.putField(63, "2071 Card Do not Match");
+						p_msg.putField(Base24Atm.Bit.ENTITY_ERROR, "2071 Card Do not Match");
 					} else {
 						encryptPan = crypto.encryptPanData(p_msg.getTrack2Data().getPan(), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
 						encryptExpDate = crypto.encryptExpDateData(Utils.constructExpDateForCommand(p_msg.getTrack2Data().getExpiryDate()), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
@@ -754,17 +754,17 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				if(!encryptPan.equals("") && !encryptPan.equals("ERROR")
 						&& !encryptExpDate.equals("") && !encryptExpDate.equals("ERROR")) {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, SystemConstants.TWO_ZEROS);
-					p_msg.putField(54, Base64.getEncoder().encodeToString(encryptPan.getBytes()));
-					p_msg.putField(57, Base64.getEncoder().encodeToString(encryptExpDate.getBytes()));
+					p_msg.putField(Iso8583.Bit._054_ADDITIONAL_AMOUNTS, encryptPan);
+					p_msg.putField(Iso8583Post.Bit._057_AUTH_LIFE_CYCLE, encryptExpDate);
 				} else {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, "55");
-					p_msg.putField(63, "2091 Error in the Process");
+					p_msg.putField(Base24Atm.Bit.ENTITY_ERROR, "2091 Error in the Process");
 				}
 				field_structure_w.put("PROCESS", "ENCRYPT");
 				
 				constructMsgToTm(p_msg, msgToTM, field_structure_w);
 				
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendEncryptionData("==FIN PROCESO ENCRIPCION DATA==", p37));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("==FIN PROCESO ENCRIPCION DATA==", p37, SystemConstants.PROCESS_ENCRYPT_DATA));
 				
 				
 		
@@ -789,12 +789,12 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 
 			try {
 				String p37 = p_msg.isFieldSet(Iso8583.Bit._037_RETRIEVAL_REF_NR) ? p_msg.getField(Iso8583.Bit._037_RETRIEVAL_REF_NR) : "000000000000";
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendDecryptionData("==INICIO PROCESO DESENCRIPCION DATA==", p37));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("==INICIO PROCESO DESENCRIPCION DATA==", p37, SystemConstants.PROCESS_DECRYPT_DATA));
 				ProcessingCode ps =  new ProcessingCode(p_msg.getField(Iso8583.Bit._003_PROCESSING_CODE));	
 				CryptoCfgManager crypcfgman = CryptoManager.getStaticConfiguration();
 				DesKwp kwpEncryptKey = crypcfgman.getKwp("HKSDAKEY");
 				
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendDecryptionData("kwpChannel:" + kwpEncryptKey.getName(), p37));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("kwpChannel:" + kwpEncryptKey.getName(), p37, SystemConstants.PROCESS_DECRYPT_DATA));
 				Logger.logLine("kwpEncryptKey:" + kwpEncryptKey.getName(), enableLog);
 				Logger.logLine("kwpEncryptKey.getValueUnderKsk():" + kwpEncryptKey.getValueUnderKsk(), enableLog);
 				Crypto crypto = new Crypto(enableLog);
@@ -819,7 +819,7 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				} else {
 					if (!docBd.equals(docIn)) {
 						p_msg.putField(Iso8583.Bit._039_RSP_CODE, "56");
-						p_msg.putField(63, "2071 Card Do not Match");
+						p_msg.putField(Base24Atm.Bit.ENTITY_ERROR, "2071 Card Do not Match");
 					} else {
 						decryptPan = crypto.decryptPanData(p_msg.getTrack2Data().getPan(), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
 						decryptExpDate = crypto.decryptExpDateData(Utils.constructExpDateForCommand(p_msg.getTrack2Data().getExpiryDate()), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
@@ -829,18 +829,18 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				if(!decryptPan.equals("") && !decryptPan.equals("ERROR")
 						&& !decryptExpDate.equals("") && !decryptExpDate.equals("ERROR")) {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, SystemConstants.TWO_ZEROS);
-					p_msg.putField(54, Base64.getEncoder().encodeToString(decryptPan.getBytes()));
-					p_msg.putField(57, Base64.getEncoder().encodeToString(decryptExpDate.getBytes()));
+					p_msg.putField(Iso8583.Bit._054_ADDITIONAL_AMOUNTS, decryptPan);
+					p_msg.putField(Iso8583Post.Bit._057_AUTH_LIFE_CYCLE, decryptExpDate);
 				} else {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, "55");
-					p_msg.putField(63, "2091 Error in the Process");
+					p_msg.putField(Base24Atm.Bit.ENTITY_ERROR, "2091 Error in the Process");
 				}
 				
 				field_structure_w.put("PROCESS", "DECRYPT");
 				
 				constructMsgToTm(p_msg, msgToTM, field_structure_w);
 				
-				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSendDecryptionData("==FIN PROCESO DESENCRIPCION DATA==", p37));
+				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("==FIN PROCESO DESENCRIPCION DATA==", p37, SystemConstants.PROCESS_DECRYPT_DATA));
 				
 				
 		
@@ -932,12 +932,15 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				if (p_msgIso.isFieldSet(Iso8583.Bit._049_CURRENCY_CODE_TRAN))
 					msgToTM.putField(Iso8583.Bit._049_CURRENCY_CODE_TRAN,
 							p_msgIso.getField(Iso8583.Bit._049_CURRENCY_CODE_TRAN).toString());
+				else
+					msgToTM.putField(Iso8583.Bit._049_CURRENCY_CODE_TRAN,
+							SystemConstants.CURRENCY);
 
 				if (p_msgIso.isFieldSet(Iso8583.Bit._052_PIN_DATA))
 					msgToTM.putField(Iso8583.Bit._052_PIN_DATA,
 							Transform.fromHexToBin(p_msgIso.getField(Iso8583.Bit._052_PIN_DATA)));
 
-					msgToTM.putField(Iso8583.Bit._100_RECEIVING_INST_ID_CODE, "200");
+					msgToTM.putField(Iso8583.Bit._100_RECEIVING_INST_ID_CODE, SystemConstants.INSTITUTION_ID);
 
 				if (p_msgIso.isFieldSet(Iso8583.Bit._102_ACCOUNT_ID_1))
 					msgToTM.putField(Iso8583.Bit._102_ACCOUNT_ID_1, p_msgIso.getField(Iso8583.Bit._102_ACCOUNT_ID_1).toString());

@@ -20,6 +20,7 @@ public class SystemConstants {
 	public static final String ONE_ZERO = "0";
 	public static final String TWO_ZEROS = "00";
 	public static final String NUMBER_99 = "99";
+	public static final String CURRENCY = "170";
 	public static final String SPACE = " ";
 	public static final String DEFAULT_ACCOUNT_INPUT = "0000000000000000";
 	public static final String CODE_DECLINATION = "36";
@@ -39,6 +40,10 @@ public class SystemConstants {
 	public static final String POS_DATA_CODE = "911201513344002";
 	public static final String PAYEE = "0054150070650000000000000";
 	public static final String TYPE_MESSAGE_0220 = "0220";
+	public static final String PROCESS_VALIDATE_PIN = "VALIDATPIN";
+	public static final String PROCESS_ENCRYPT_DATA = "ENCRYPTDAT";
+	public static final String PROCESS_DECRYPT_DATA = "DECRYPTDAT";
+	public static final String PROCESS_CHANGE_PIN = "CHANGE_PIN";
 
 	// Transaction Identificator
 	public static final String IPInterface = "localhost";

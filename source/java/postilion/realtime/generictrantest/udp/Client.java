@@ -220,16 +220,6 @@ public class Client {
 		return (Base64.getEncoder().encodeToString(msg.getBytes())).getBytes();
 	}
 	
-	/**
-	 * Formatea mensaje para envio a log udp
-	 * 
-	 * @param value valor a enviar en el log
-	 * @param p37 a enviar
-	 * @throws XPostilion
-	 */
-	public static byte[] formatDatatoSendPinValidation(String value, String p37) {
-		return ("RN_POSTILIONVALIDATION_DATA=VALIDATPIN"+" | "+p37+" | "+value).getBytes();
-	}
 	
 	/**
 	 * Formatea mensaje para envio a log udp
@@ -238,31 +228,10 @@ public class Client {
 	 * @param p37 a enviar
 	 * @throws XPostilion
 	 */
-	public static byte[] formatDatatoSendEncryptionData(String value, String p37) {
-		return ("RN_POSTILIONVALIDATION_DATA=ENCRYPTDAT"+" | "+p37+" | "+value).getBytes();
+	public static byte[] formatDatatoSend(String value, String p37, String process) {
+		return ("RN_POSTILIONVALIDATION_DATA="+process+" | "+p37+" | "+value).getBytes();
 	}
 	
-	/**
-	 * Formatea mensaje para envio a log udp
-	 * 
-	 * @param value valor a enviar en el log
-	 * @param p37 a enviar
-	 * @throws XPostilion
-	 */
-	public static byte[] formatDatatoSendDecryptionData(String value, String p37) {
-		return ("RN_POSTILIONVALIDATION_DATA=DECRYPTDAT"+" | "+p37+" | "+value).getBytes();
-	}
-	
-	/**
-	 * Formatea mensaje para envio a log udp
-	 * 
-	 * @param value valor a enviar en el log
-	 * @param p37 a enviar
-	 * @throws XPostilion
-	 */
-	public static byte[] formatDatatoSendChangePin(String value, String p37) {
-		return ("RN_POSTILIONVALIDATION_DATA=CHANGE_PIN"+" | "+p37+" | "+value).getBytes();
-	}
 	
 	/**
 	 * Open a socket to send data over UDP protocol
