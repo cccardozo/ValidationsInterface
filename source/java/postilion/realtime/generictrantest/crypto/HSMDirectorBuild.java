@@ -46,7 +46,8 @@ public class HSMDirectorBuild {
 			} else {
 				data = processMessage(commandHSM);
 				if (data == null || errorHsm.equals(data)) {
-					socket.close();
+					if(socket != null)
+						socket.close();
 					openConnectHSM(ip, puerto);
 					data = processMessage(commandHSM);
 				}

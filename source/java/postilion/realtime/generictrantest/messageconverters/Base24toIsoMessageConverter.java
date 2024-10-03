@@ -734,7 +734,10 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				String docIn = p_msg.isFieldSet(Iso8583.Bit._104_TRAN_DESCRIPTION)
 						? p_msg.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).substring(p_msg.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).length()-10) : "0000000000";
 				String docBd = field_structure_w != null && field_structure_w.get("CUSTOMER_ID") != null 
-						? field_structure_w.get("CUSTOMER_ID") : "NOT FOUND";
+						? field_structure_w.get("CUSTOMER_ID").substring(field_structure_w.get("CUSTOMER_ID").length()-10) : "NOT FOUND";
+				
+				Logger.logLine("docIn: "+docIn, enableLog);
+				Logger.logLine("docBd: "+docBd, enableLog);
 				
 				if(field_structure_w.get("ERROR") != null) {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, field_structure_w.get("ERROR_CODE"));
@@ -751,8 +754,8 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				if(!encryptPan.equals("") && !encryptPan.equals("ERROR")
 						&& !encryptExpDate.equals("") && !encryptExpDate.equals("ERROR")) {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, SystemConstants.TWO_ZEROS);
-					p_msg.putField(52, Base64.getEncoder().encodeToString(encryptPan.getBytes()));
-					p_msg.putField(53, Base64.getEncoder().encodeToString(encryptExpDate.getBytes()));
+					p_msg.putField(54, Base64.getEncoder().encodeToString(encryptPan.getBytes()));
+					p_msg.putField(57, Base64.getEncoder().encodeToString(encryptExpDate.getBytes()));
 				} else {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, "55");
 					p_msg.putField(63, "2091 Error in the Process");
@@ -806,7 +809,10 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				String docIn = p_msg.isFieldSet(Iso8583.Bit._104_TRAN_DESCRIPTION)
 						? p_msg.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).substring(p_msg.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).length()-10) : "0000000000";
 				String docBd = field_structure_w != null && field_structure_w.get("CUSTOMER_ID") != null 
-						? field_structure_w.get("CUSTOMER_ID") : "NOT FOUND";
+						? field_structure_w.get("CUSTOMER_ID").substring(field_structure_w.get("CUSTOMER_ID").length()-10) : "NOT FOUND";
+				
+				Logger.logLine("docIn: "+docIn, enableLog);
+				Logger.logLine("docBd: "+docBd, enableLog);
 				
 				if(field_structure_w.get("ERROR") != null) {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, field_structure_w.get("ERROR_CODE"));
@@ -823,8 +829,8 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				if(!decryptPan.equals("") && !decryptPan.equals("ERROR")
 						&& !decryptExpDate.equals("") && !decryptExpDate.equals("ERROR")) {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, SystemConstants.TWO_ZEROS);
-					p_msg.putField(52, Base64.getEncoder().encodeToString(decryptPan.getBytes()));
-					p_msg.putField(53, Base64.getEncoder().encodeToString(decryptExpDate.getBytes()));
+					p_msg.putField(54, Base64.getEncoder().encodeToString(decryptPan.getBytes()));
+					p_msg.putField(57, Base64.getEncoder().encodeToString(decryptExpDate.getBytes()));
 				} else {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, "55");
 					p_msg.putField(63, "2091 Error in the Process");
