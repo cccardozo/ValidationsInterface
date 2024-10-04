@@ -755,7 +755,7 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 						&& !encryptExpDate.equals("") && !encryptExpDate.equals("ERROR")) {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, SystemConstants.TWO_ZEROS);
 					p_msg.putField(Iso8583.Bit._054_ADDITIONAL_AMOUNTS, encryptPan);
-					p_msg.putField(Iso8583Post.Bit._057_AUTH_LIFE_CYCLE, encryptExpDate);
+					p_msg.putField(Iso8583Post.Bit._059_ECHO_DATA, encryptExpDate);
 				} else {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, "55");
 					p_msg.putField(Base24Atm.Bit.ENTITY_ERROR, "2091 Error in the Process");
@@ -830,7 +830,7 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 						&& !decryptExpDate.equals("") && !decryptExpDate.equals("ERROR")) {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, SystemConstants.TWO_ZEROS);
 					p_msg.putField(Iso8583.Bit._054_ADDITIONAL_AMOUNTS, decryptPan);
-					p_msg.putField(Iso8583Post.Bit._057_AUTH_LIFE_CYCLE, decryptExpDate);
+					p_msg.putField(Iso8583Post.Bit._059_ECHO_DATA, decryptExpDate);
 				} else {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, "55");
 					p_msg.putField(Base24Atm.Bit.ENTITY_ERROR, "2091 Error in the Process");

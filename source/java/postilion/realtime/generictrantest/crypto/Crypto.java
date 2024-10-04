@@ -102,7 +102,7 @@ public class Crypto {
 		boolean result = false;
 		
 		try {
-			String command32 = "<32#2#3#" + pinBlock + "#" + kwp + "#0123456789012345#" + pinOffset + "#" + pan.substring(4) + "#F#4#" + kvp + "#F#" + pan.substring(3, 15) + "#>";
+			String command32 = "<32#2#3#" + pinBlock + "#" + kwp + "#0123456789012345#" + pinOffset + "#" + pan.substring(4) + "#F#4#" + kvp + "#F#" + pan.substring(3, 15) + "#^"+p37+"#>";
 			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command32:" + command32, p37, SystemConstants.PROCESS_VALIDATE_PIN));
 			Logger.logLine("command32:" + command32, log);
 			String resCommand32[] = this.hsmComm.sendCommand(command32, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
@@ -139,7 +139,7 @@ public class Crypto {
 	public String convertPin(String pinBlock, String kwpChannel, String idDoc, String p37, boolean log) {
 		String result = "FFFFFFFFFFFFFFFF";
 		try {
-			String command33 = "<33#13#" + kwpChannel + "#" + kwpChannel + "#" + pinBlock + "#F#" + idDoc + "#>";
+			String command33 = "<33#13#" + kwpChannel + "#" + kwpChannel + "#" + pinBlock + "#F#" + idDoc + "#^"+p37+"#>";
 			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command33:" + command33, p37, SystemConstants.PROCESS_VALIDATE_PIN));
 			Logger.logLine("command33:" + command33, log);
 			String resCommand33[] = this.hsmComm.sendCommand(command33, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
@@ -183,7 +183,7 @@ public class Crypto {
 		
 		try {
 			String command37 = "<37#2#3#" + oldPinblock + "#" + kwpChannel + "#0123456789012345#" + pinOffset + "#" + 
-								pan.substring(4) + "#F#4#" + validationKey + "#" + newPinblock + "#F#" + pan.substring(3, 15) + "#>";
+								pan.substring(4) + "#F#4#" + validationKey + "#" + newPinblock + "#F#" + pan.substring(3, 15) + "#^"+p37+"#>";
 			Logger.logLine("command37:" + command37, log);
 			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command37:" + command37, p37, SystemConstants.PROCESS_CHANGE_PIN));
 			String resCommand37[] = this.hsmComm.sendCommand(command37, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
@@ -246,7 +246,7 @@ public class Crypto {
 		String dataEncrypted = "";
 		
 		try {
-			String command97 = "<97#E#1#" + key + "#D#U#" + data.length() + "#" + data + "#2#>";
+			String command97 = "<97#E#1#" + key + "#D#U#" + data.length() + "#" + data + "#^"+p37+"#>";
 			Logger.logLine("command97:" + command97, log);
 			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command97:" + command97, p37, SystemConstants.PROCESS_ENCRYPT_DATA));
 			String resCommand97[] = this.hsmComm.sendCommand(command97, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
@@ -277,7 +277,7 @@ public class Crypto {
 		String dataDecrypted = "";
 		
 		try {
-			String command97 = "<97#D#1#" + key + "#D#U#" + encryptedData.length() + "#" + encryptedData + "#2#>";
+			String command97 = "<97#D#1#" + key + "#D#U#" + encryptedData.length() + "#" + encryptedData + "#^"+p37+"#>";
 			Logger.logLine("command97:" + command97, log);
 			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command97:" + command97, p37, SystemConstants.PROCESS_DECRYPT_DATA));
 			String resCommand97[] = this.hsmComm.sendCommand(command97, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
@@ -309,7 +309,7 @@ public class Crypto {
 		String dataEncrypted = "";
 		
 		try {
-			String command97 = "<97#E#1#" + key + "#D#U#" + data.length() + "#" + data + "#2#>";
+			String command97 = "<97#E#1#" + key + "#D#U#" + data.length() + "#" + data + "#^"+p37+"#>";
 			Logger.logLine("command97:" + command97, log);
 			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command97:" + command97, p37, SystemConstants.PROCESS_ENCRYPT_DATA));
 			String resCommand97[] = this.hsmComm.sendCommand(command97, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
@@ -340,7 +340,7 @@ public class Crypto {
 		String dataDecrypted = "";
 		
 		try {
-			String command97 = "<97#D#1#" + key + "#D#U#" + encryptedData.length() + "#" + encryptedData + "#2#>";
+			String command97 = "<97#D#1#" + key + "#D#U#" + encryptedData.length() + "#" + encryptedData + "#^"+p37+"#>";
 			Logger.logLine("command97:" + command97, log);
 			GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("command97:" + command97, p37, SystemConstants.PROCESS_DECRYPT_DATA));
 			String resCommand97[] = this.hsmComm.sendCommand(command97, GenericInterfaceTranTest.ipACryptotalla, GenericInterfaceTranTest.portACryptotalla).split("#");
