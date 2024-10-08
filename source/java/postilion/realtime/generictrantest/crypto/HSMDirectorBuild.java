@@ -61,6 +61,12 @@ public class HSMDirectorBuild {
 		} catch (XPostilion e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		return data;
@@ -68,48 +74,92 @@ public class HSMDirectorBuild {
 
 	@SuppressWarnings("deprecation")
 	public String processMessage(String msgIn) {
-		try {
-			if (socket != null) {
-				in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-				out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-				String response = "";
-				command = msgIn;
-				// socket.shutdownInput();
-				out.writeShort(command.getBytes().length);
-				out.write(command.getBytes());
-				out.flush();
+	    try {
+	        if (socket != null) {
+	            try (DataInputStream in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+	                 DataOutputStream out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()))) {
 
-				
-				try {
-					
-					response = new String(in.readLine());
-					
-				} catch (SocketException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
-					e.printStackTrace();
-				}
-				return response;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return errorHsm; // No hay Conexion con la HSM
+	                String response = "";
+	                command = msgIn;
+
+	                out.writeShort(command.getBytes().length);
+	                out.write(command.getBytes());
+	                out.flush();
+
+	                try {
+	                    response = new String(in.readLine());
+	                    
+	                } catch (SocketException e) {
+	                    e.printStackTrace();
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                } finally {
+		                if (in != null) in.close();
+		                if (out != null) out.close();
+					}
+
+	                return response;
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return errorHsm; // No hay Conexion con la HSM
 	}
+	
+//	@SuppressWarnings("deprecation")
+//	public String processMessage(String msgIn) {
+//		try {
+//			if (socket != null) {
+//				in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+//				out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+//				String response = "";
+//				command = msgIn;
+//				// socket.shutdownInput();
+//				out.writeShort(command.getBytes().length);
+//				out.write(command.getBytes());
+//				out.flush();
+//
+//				
+//				try {
+//					
+//					response = new String(in.readLine());
+//					
+//				} catch (SocketException e) {
+//					e.printStackTrace();
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					e.printStackTrace();
+//				} finally {
+//	                if (in != null) in.close();
+//	                if (out != null) out.close();
+//				}
+//				return response;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return errorHsm; // No hay Conexion con la HSM
+//	}
 
 	public void closeConnectHSM() {
-		try {
-			socket.close();
-			if (out != null)
-				out.close();
-			if (in != null)
-				in.close();
-			socket = null;
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
+	    try {
+	        if (socket != null && !socket.isClosed()) {
+	            socket.close();
+	        }
+	        if (out != null) {
+	            out.close();
+	        }
+	        if (in != null) {
+	            in.close();
+	        }
+	        socket = null;
+	    } catch (Exception exception) {
+	        exception.printStackTrace();
+	    }
 	}
+
 
 	public void openConnectHSM(String ipAddress, int port) {
 		// hsm OFF
@@ -122,7 +172,7 @@ public class HSMDirectorBuild {
 
 			try {
 				socket = new Socket(ipAddress, port);
-				socket.setSoTimeout(7000);
+				socket.setSoTimeout(5000);
 				System.out.println("<<< Sockt s >>> :" + socket);
 			} catch (Exception ex) {
 				try {

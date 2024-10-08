@@ -394,6 +394,8 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 					else
 						p_msg.putField(Iso8583.Bit._039_RSP_CODE, "05");
 				}
+				field_structure_w.put("PROCESS_2", "CVV");
+				field_structure_w.put("PROCESS", "VALIDATION_PIN");
 				
 				constructMsgToTm(p_msg, msgToTM, field_structure_w);
 				
@@ -417,6 +419,8 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 
 			try {		
 				Crypto crypto = new Crypto(enableLog);
+				StructuredData field_structure_w = new StructuredData();
+				field_structure_w.put("PROCESS", "CVV");
 
 				boolean resultCvv = crypto.validateCvv(p_msg, enableLog);
 				p_msg.putMsgType(Iso8583.MsgType._0210_TRAN_REQ_RSP);
@@ -427,7 +431,7 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, "98");
 				}
 				
-				constructMsgToTm(p_msg, msgToTM, new StructuredData());
+				constructMsgToTm(p_msg, msgToTM, field_structure_w);
 		
 			} catch (XFieldUnableToConstruct e) {
 				// TODO Auto-generated catch block
@@ -513,6 +517,7 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				
 				validPin = crypto.validatePin(pinBlockConverted, kwpChannel.getValueUnderKsk(), pinOffset, pan, kwpPinKey.getValueUnderKsk(), p37, enableLog);
 				field_structure_w.put("PINVALID", validPin ? "TRUE" : "FALSE");
+				field_structure_w.put("PROCESS", "VALIDATION_PIN");
 				
 				GenericInterfaceTranTest.udpClient.sendData(Client.formatDatatoSend("validPin:" + validPin, p37, SystemConstants.PROCESS_VALIDATE_PIN));
 				Logger.logLine("validPin:" + validPin, enableLog);
@@ -684,6 +689,7 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				
 				changedPin = crypto.changePIN(oldPinBlockConverted, kwpChannel.getValueUnderKsk(), pinOffset, pan, kwpPinKey.getValueUnderKsk(), newPinBlockConverted, p37, enableLog);
 				field_structure_w.put("CHANGEPIN", changedPin);
+				field_structure_w.put("PROCESS", "CHANGE_PIN");
 				
 				if(!changedPin.equals("FFFF")) {
 					result = DBHandler.updateOffset(issuer, changedPin, pan, p_msgIso.getTrack2Data().getExpiryDate(), enableLog);
@@ -727,30 +733,36 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				String encryptExpDate = "";
 				p_msg.putMsgType(Iso8583.MsgType._0210_TRAN_REQ_RSP);
 				
-				DBHandler.getClientData(ps.toString(), p_msg.getTrack2Data().getPan(), ps.getFromAccount(), p_msg.getTrack2Data().getExpiryDate(),
-						"0000000000000000", field_structure_w);			
-				
-				Logger.logLine(field_structure_w.toMsgString(), enableLog);
-				String docIn = p_msg.isFieldSet(Iso8583.Bit._104_TRAN_DESCRIPTION)
-						? p_msg.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).substring(p_msg.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).length()-10) : "0000000000";
-				String docBd = field_structure_w != null && field_structure_w.get("CUSTOMER_ID") != null 
-						? field_structure_w.get("CUSTOMER_ID").substring(field_structure_w.get("CUSTOMER_ID").length()-10) : "NOT FOUND";
-				
-				Logger.logLine("docIn: "+docIn, enableLog);
-				Logger.logLine("docBd: "+docBd, enableLog);
-				
-				if(field_structure_w.get("ERROR") != null) {
-					p_msg.putField(Iso8583.Bit._039_RSP_CODE, field_structure_w.get("ERROR_CODE"));
+				if(p_msg.getField(Iso8583.Bit._041_CARD_ACCEPTOR_TERM_ID).substring(12,13).equals("C")) {
+					encryptPan = crypto.encryptPanData(p_msg.getTrack2Data().getPan(), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
+					encryptExpDate = crypto.encryptExpDateData(Utils.constructExpDateForCommand(p_msg.getTrack2Data().getExpiryDate()), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
 				} else {
-					if (!docBd.equals(docIn)) {
-						p_msg.putField(Iso8583.Bit._039_RSP_CODE, "56");
-						p_msg.putField(Base24Atm.Bit.ENTITY_ERROR, "2071 Card Do not Match");
+					DBHandler.getClientData(ps.toString(), p_msg.getTrack2Data().getPan(), ps.getFromAccount(), p_msg.getTrack2Data().getExpiryDate(),
+							"0000000000000000", field_structure_w);			
+					
+					Logger.logLine(field_structure_w.toMsgString(), enableLog);
+					String docIn = p_msg.isFieldSet(Iso8583.Bit._104_TRAN_DESCRIPTION)
+							? p_msg.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).substring(p_msg.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).length()-10) : "0000000000";
+					String docBd = field_structure_w != null && field_structure_w.get("CUSTOMER_ID") != null 
+							? field_structure_w.get("CUSTOMER_ID").substring(field_structure_w.get("CUSTOMER_ID").length()-10) : "NOT FOUND";
+					
+					Logger.logLine("docIn: "+docIn, enableLog);
+					Logger.logLine("docBd: "+docBd, enableLog);
+					
+					if(field_structure_w.get("ERROR") != null) {
+						p_msg.putField(Iso8583.Bit._039_RSP_CODE, field_structure_w.get("ERROR_CODE"));
 					} else {
-						encryptPan = crypto.encryptPanData(p_msg.getTrack2Data().getPan(), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
-						encryptExpDate = crypto.encryptExpDateData(Utils.constructExpDateForCommand(p_msg.getTrack2Data().getExpiryDate()), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
+						if (!docBd.equals(docIn)) {
+							p_msg.putField(Iso8583.Bit._039_RSP_CODE, "56");
+							p_msg.putField(Base24Atm.Bit.ENTITY_ERROR, "2071 Card Do not Match");
+						} else {
+							encryptPan = crypto.encryptPanData(p_msg.getTrack2Data().getPan(), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
+							encryptExpDate = crypto.encryptExpDateData(Utils.constructExpDateForCommand(p_msg.getTrack2Data().getExpiryDate()), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
+						}
 					}
+					
+					
 				}
-				
 				if(!encryptPan.equals("") && !encryptPan.equals("ERROR")
 						&& !encryptExpDate.equals("") && !encryptExpDate.equals("ERROR")) {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, SystemConstants.TWO_ZEROS);
@@ -760,6 +772,8 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, "55");
 					p_msg.putField(Base24Atm.Bit.ENTITY_ERROR, "2091 Error in the Process");
 				}
+				
+				
 				field_structure_w.put("PROCESS", "ENCRYPT");
 				
 				constructMsgToTm(p_msg, msgToTM, field_structure_w);
@@ -802,30 +816,36 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 				String decryptExpDate = "";
 				p_msg.putMsgType(Iso8583.MsgType._0210_TRAN_REQ_RSP);
 				
-				DBHandler.getClientData(ps.toString(), p_msg.getTrack2Data().getPan(), ps.getFromAccount(), p_msg.getTrack2Data().getExpiryDate(),
-						"0000000000000000", field_structure_w);			
-				
-				Logger.logLine(field_structure_w.toMsgString(), enableLog);
-				String docIn = p_msg.isFieldSet(Iso8583.Bit._104_TRAN_DESCRIPTION)
-						? p_msg.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).substring(p_msg.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).length()-10) : "0000000000";
-				String docBd = field_structure_w != null && field_structure_w.get("CUSTOMER_ID") != null 
-						? field_structure_w.get("CUSTOMER_ID").substring(field_structure_w.get("CUSTOMER_ID").length()-10) : "NOT FOUND";
-				
-				Logger.logLine("docIn: "+docIn, enableLog);
-				Logger.logLine("docBd: "+docBd, enableLog);
-				
-				if(field_structure_w.get("ERROR") != null) {
-					p_msg.putField(Iso8583.Bit._039_RSP_CODE, field_structure_w.get("ERROR_CODE"));
+				if(p_msg.getField(Iso8583.Bit._041_CARD_ACCEPTOR_TERM_ID).substring(12,13).equals("C")) {
+					decryptPan = crypto.decryptPanData(p_msg.getTrack2Data().getPan(), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
+					decryptExpDate = crypto.decryptExpDateData(Utils.constructExpDateForCommand(p_msg.getTrack2Data().getExpiryDate()), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
 				} else {
-					if (!docBd.equals(docIn)) {
-						p_msg.putField(Iso8583.Bit._039_RSP_CODE, "56");
-						p_msg.putField(Base24Atm.Bit.ENTITY_ERROR, "2071 Card Do not Match");
+					DBHandler.getClientData(ps.toString(), p_msg.getTrack2Data().getPan(), ps.getFromAccount(), p_msg.getTrack2Data().getExpiryDate(),
+							"0000000000000000", field_structure_w);			
+					
+					Logger.logLine(field_structure_w.toMsgString(), enableLog);
+					String docIn = p_msg.isFieldSet(Iso8583.Bit._104_TRAN_DESCRIPTION)
+							? p_msg.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).substring(p_msg.getField(Iso8583.Bit._104_TRAN_DESCRIPTION).length()-10) : "0000000000";
+					String docBd = field_structure_w != null && field_structure_w.get("CUSTOMER_ID") != null 
+							? field_structure_w.get("CUSTOMER_ID").substring(field_structure_w.get("CUSTOMER_ID").length()-10) : "NOT FOUND";
+					
+					Logger.logLine("docIn: "+docIn, enableLog);
+					Logger.logLine("docBd: "+docBd, enableLog);
+					
+					if(field_structure_w.get("ERROR") != null) {
+						p_msg.putField(Iso8583.Bit._039_RSP_CODE, field_structure_w.get("ERROR_CODE"));
 					} else {
-						decryptPan = crypto.decryptPanData(p_msg.getTrack2Data().getPan(), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
-						decryptExpDate = crypto.decryptExpDateData(Utils.constructExpDateForCommand(p_msg.getTrack2Data().getExpiryDate()), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
+						if (!docBd.equals(docIn)) {
+							p_msg.putField(Iso8583.Bit._039_RSP_CODE, "56");
+							p_msg.putField(Base24Atm.Bit.ENTITY_ERROR, "2071 Card Do not Match");
+						} else {
+							decryptPan = crypto.decryptPanData(p_msg.getTrack2Data().getPan(), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
+							decryptExpDate = crypto.decryptExpDateData(Utils.constructExpDateForCommand(p_msg.getTrack2Data().getExpiryDate()), kwpEncryptKey.getValueUnderKsk(), p37, enableLog);
+						}
 					}
+					
+					
 				}
-				
 				if(!decryptPan.equals("") && !decryptPan.equals("ERROR")
 						&& !decryptExpDate.equals("") && !decryptExpDate.equals("ERROR")) {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, SystemConstants.TWO_ZEROS);
@@ -835,6 +855,8 @@ public class Base24toIsoMessageConverter extends Iso8583 {
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, "55");
 					p_msg.putField(Base24Atm.Bit.ENTITY_ERROR, "2091 Error in the Process");
 				}
+				
+				
 				
 				field_structure_w.put("PROCESS", "DECRYPT");
 				
