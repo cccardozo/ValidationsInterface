@@ -28,13 +28,27 @@ public class CardStatus extends Iso8583 {
 
 			resultCardStatus = processCardStatus(p_msg, msgToTM, field_structured, enableLog);
 
-			if (resultCardStatus) {
-				p_msg.putField(Iso8583.Bit._039_RSP_CODE, Iso8583.RspCode._00_SUCCESSFUL);
-			} else {
-				p_msg.putField(Iso8583.Bit._039_RSP_CODE,
-						Iso8583.RspCode._36_RESTRICTED_CARD_PICK_UP); /**
-																		 * Restricted card, pick-up estado con bloqueo
-																		 **/
+			/*
+			 * if (resultCardStatus) { p_msg.putField(Iso8583.Bit._039_RSP_CODE,
+			 * Iso8583.RspCode._00_SUCCESSFUL); } else {
+			 * p_msg.putField(Iso8583.Bit._039_RSP_CODE,
+			 * Iso8583.RspCode._36_RESTRICTED_CARD_PICK_UP); }
+			 */
+
+			if (p_msg.isFieldSet(Iso8583.Bit._102_ACCOUNT_ID_1)) {
+				String primerasDosPosiciones = p_msg.getField(Iso8583.Bit._102_ACCOUNT_ID_1).toString().substring(0, 2);
+
+				/// Determina el código de respuesta
+				if (SystemConstants.TWO_ZEROS.equals(primerasDosPosiciones) && resultCardStatus) {
+					// Caso: "00" y bloqueada o no bloqueada
+					p_msg.putField(Iso8583.Bit._039_RSP_CODE, Iso8583.RspCode._00_SUCCESSFUL);
+				} else if (!SystemConstants.TWO_ZEROS.equals(primerasDosPosiciones) && resultCardStatus) {
+					// Caso: diferente de "00" y no bloqueada
+					p_msg.putField(Iso8583.Bit._039_RSP_CODE, Iso8583.RspCode._00_SUCCESSFUL);
+				} else {
+					// Caso: diferente de "00" y bloqueada
+					p_msg.putField(Iso8583.Bit._039_RSP_CODE, Iso8583.RspCode._36_RESTRICTED_CARD_PICK_UP);
+				}
 			}
 
 		} catch (XFieldUnableToConstruct e) {
@@ -65,8 +79,8 @@ public class CardStatus extends Iso8583 {
 			if (DBHandler.Card(issuer, pan, expiryDate, enableLog)
 					&& DBHandler.Company(issuer, customerId, enableLog)) {
 				field_structured.put(SystemConstants.KEY_NOV_CAPA, SystemConstants.VALUE_NOV_CAPA);
-				field_structured.put(SystemConstants.KEY_CUSTOMER_ID, customerId);
-				field_structured.put(SystemConstants.KEY_CUSTOMER_ID_TYPE, customerIdType);
+				// field_structured.put(SystemConstants.KEY_CUSTOMER_ID, customerId);
+				// field_structured.put(SystemConstants.KEY_CUSTOMER_ID_TYPE, customerIdType);
 				constructMsgToTm(p_msgIso, msgToTM, field_structured);
 				return true;
 			}
