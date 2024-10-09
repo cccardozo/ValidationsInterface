@@ -20,29 +20,25 @@ public class CardStatus extends Iso8583 {
 		try {
 
 			ProcessingCode ps = new ProcessingCode(p_msg.getField(Iso8583.Bit._003_PROCESSING_CODE));
-			boolean resultCardStatus = false;
+
 			DBHandler.getClientData(ps.toString(), p_msg.getTrack2Data().getPan(), ps.getFromAccount(),
 					p_msg.getTrack2Data().getExpiryDate(), SystemConstants.DEFAULT_ACCOUNT_INPUT, field_structured);
+
+			boolean resultCardStatus = false;
 
 			p_msg.putMsgType(Iso8583.MsgType._0210_TRAN_REQ_RSP);
 
 			resultCardStatus = processCardStatus(p_msg, msgToTM, field_structured, enableLog);
 
-			/*
-			 * if (resultCardStatus) { p_msg.putField(Iso8583.Bit._039_RSP_CODE,
-			 * Iso8583.RspCode._00_SUCCESSFUL); } else {
-			 * p_msg.putField(Iso8583.Bit._039_RSP_CODE,
-			 * Iso8583.RspCode._36_RESTRICTED_CARD_PICK_UP); }
-			 */
-
 			if (p_msg.isFieldSet(Iso8583.Bit._102_ACCOUNT_ID_1)) {
 				String primerasDosPosiciones = p_msg.getField(Iso8583.Bit._102_ACCOUNT_ID_1).toString().substring(0, 2);
 
 				/// Determina el código de respuesta
-				if (SystemConstants.TWO_ZEROS.equals(primerasDosPosiciones) && resultCardStatus) {
+				if (SystemConstants.TWO_ZEROS.equals(primerasDosPosiciones)) {
 					// Caso: "00" y bloqueada o no bloqueada
+					constructMsgToTm(p_msg, msgToTM, field_structured);
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, Iso8583.RspCode._00_SUCCESSFUL);
-				} else if (!SystemConstants.TWO_ZEROS.equals(primerasDosPosiciones) && resultCardStatus) {
+				} else if (resultCardStatus) {
 					// Caso: diferente de "00" y no bloqueada
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, Iso8583.RspCode._00_SUCCESSFUL);
 				} else {
@@ -79,8 +75,6 @@ public class CardStatus extends Iso8583 {
 			if (DBHandler.Card(issuer, pan, expiryDate, enableLog)
 					&& DBHandler.Company(issuer, customerId, enableLog)) {
 				field_structured.put(SystemConstants.KEY_NOV_CAPA, SystemConstants.VALUE_NOV_CAPA);
-				// field_structured.put(SystemConstants.KEY_CUSTOMER_ID, customerId);
-				// field_structured.put(SystemConstants.KEY_CUSTOMER_ID_TYPE, customerIdType);
 				constructMsgToTm(p_msgIso, msgToTM, field_structured);
 				return true;
 			}
