@@ -36,6 +36,10 @@ public class CardStatus extends Iso8583 {
 				/// Determina el código de respuesta
 				if (SystemConstants.TWO_ZEROS.equals(primerasDosPosiciones)) {
 					// Caso: "00" y bloqueada o no bloqueada
+					field_structured.put(SystemConstants.KEY_NOV_CAPA, SystemConstants.VALUE_NOV_CAPA);
+					String cleanCustomerId = getFieldValue(field_structured, SystemConstants.KEY_CUSTOMER_ID,
+							SystemConstants.DEFAULT_VALUE_CUSTOMER_ID).replaceFirst("^PC0*", "");
+					field_structured.put(SystemConstants.KEY_CUSTOMER_ID, cleanCustomerId);
 					constructMsgToTm(p_msg, msgToTM, field_structured);
 					p_msg.putField(Iso8583.Bit._039_RSP_CODE, Iso8583.RspCode._00_SUCCESSFUL);
 				} else if (resultCardStatus) {
@@ -69,12 +73,13 @@ public class CardStatus extends Iso8583 {
 					SystemConstants.DEFAULT_VALUE_ISSUER);
 			String customerId = getFieldValue(field_structured, SystemConstants.KEY_CUSTOMER_ID,
 					SystemConstants.DEFAULT_VALUE_CUSTOMER_ID);
-			String customerIdType = getFieldValue(field_structured, SystemConstants.KEY_CUSTOMER_ID_TYPE,
-					SystemConstants.DEFAULT_CUSTOMER_ID_TYPE);
 
 			if (DBHandler.Card(issuer, pan, expiryDate, enableLog)
 					&& DBHandler.Company(issuer, customerId, enableLog)) {
 				field_structured.put(SystemConstants.KEY_NOV_CAPA, SystemConstants.VALUE_NOV_CAPA);
+				String cleanCustomerId = getFieldValue(field_structured, SystemConstants.KEY_CUSTOMER_ID,
+						SystemConstants.DEFAULT_VALUE_CUSTOMER_ID).replaceFirst("^PC0*", "");
+				field_structured.put(SystemConstants.KEY_CUSTOMER_ID, cleanCustomerId);
 				constructMsgToTm(p_msgIso, msgToTM, field_structured);
 				return true;
 			}
